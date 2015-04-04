@@ -247,6 +247,8 @@ alert("this is the cordova error:"+error_result);
       }
     };
     myerror = function(t, e) {
+alert("error in the execute sql");
+alert(JSON.stringify(t));
       if (!!error) {
         return error(e);
       }

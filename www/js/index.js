@@ -84,7 +84,7 @@ function getDeviceInfo() {
 
 var map = null;
 var home = [51.505, -0.08];
-var defaultZoom = 2;
+var defaultZoom = 4;
 function initMap() {
 	var mapEl = $('#map');
 
@@ -128,8 +128,8 @@ function testDb() {
 alert("testDb");
 	var db = window.sqlitePlugin.openDatabase({name: "test.mbtiles"});
 
+alert(JSON.stringify(db));
 	  db.transaction(function(tx) {
-alert("going to do the transaction");
 		tx.executeSql("select count(*) as cnt from tiles;", [], function(tx, res) {
 console.log("after the select");
 		  console.log("res.rows.length: " + res.rows.length + " -- should be 1");
@@ -139,7 +139,6 @@ alert("this is the error trying to count tiles:"+error);
 alert(JSON.stringify(error));
 		});
 	});
-alert("end of the testdb");
 }
 
 function testFs() {
