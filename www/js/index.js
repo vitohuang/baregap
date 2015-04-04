@@ -197,11 +197,13 @@ function go() {
 			console.log('downloading sqlite file...');
 			ft = new FileTransfer();
 			ft.download(remoteFile, fs.root.fullPath + '/' + localFileName, function (entry) {
+msg.innerHTML("download complete:"+entry.fullPath);
 				console.log('download complete: ' + entry.fullPath);
 
 				buildMap();
 
 			}, function (error) {
+			msg.innerHTML = 'error with download'+error;
 				console.log('error with download', error);
 			});
 		});
