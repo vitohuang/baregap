@@ -73,9 +73,11 @@
     this.openSuccess = openSuccess;
     this.openError = openError;
     this.openSuccess || (this.openSuccess = function() {
+alert("db opned: "+dbname);
       console.log("DB opened: " + dbname);
     });
     this.openError || (this.openError = function(e) {
+alert("open error:"+e.message);
       console.log(e.message);
     });
     this.open(this.openSuccess, this.openError);
@@ -171,6 +173,7 @@
       console.log('OPEN database: ' + this.dbname);
       opensuccesscb = (function(_this) {
         return function() {
+alert("db opened");
           var txLock;
           if (!_this.openDBs[_this.dbname]) {
             console.log('database was closed during open operation');
@@ -193,6 +196,7 @@ console.log("this is the open error callback from cordova");
           console.log('OPEN database: ' + _this.dbname + ' failed, aborting any pending transactions');
 console.log("cordova error result");
 console.log(error_result);
+alert("this is the cordova error:"+error_result);
           if (!!error) {
             error(newSQLError('Could not open database'));
           }

@@ -135,7 +135,8 @@ console.log("after the select");
 		  console.log("res.rows.length: " + res.rows.length + " -- should be 1");
 		  console.log("res.rows.item(0).cnt: " + res.rows.item(0).cnt + " -- should be 1");
 		}, function(error) {
-alert("this is the rrror");
+alert("this is the error trying to count tiles:"+error);
+alert(error);
 		});
 	});
 alert("end of the testdb");
@@ -151,18 +152,15 @@ function fail() {
 }
 
 function gotFs(fileSystem) {
-window.fileSystem = fileSystem;
-alert("got file system:"+fileSystem.name);
-	console.log(fileSystem.root.fullPath);
-alert(fileSystem.root.toURL());
-alert(fileSystem.root.fullPath);
+	window.fileSystem = fileSystem;
 
+	/*
 	// Try to read the files within the root directory
 	var directoryReader = fileSystem.root.createReader();
-
 	directoryReader.readEntries(function(entries) {
 		for (var i = 0; i < entries.length; i++) {
 			console.log(entries[i].name);
 		}
 	});
+	*/
 }
