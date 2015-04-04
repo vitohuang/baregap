@@ -42,9 +42,7 @@ var app = {
 	initMap();
 
 	// Trying to get the db
-	console.log("going to open a db file");
 	testDb();
-	console.log("after db");
 
 	// Test the file system path
 	testFs();
@@ -127,15 +125,20 @@ console.log(mapHeight);
 
 function testDb() {
 
-console.log("test db");
+alert("testDb");
 	var db = window.sqlitePlugin.openDatabase({name: "test.mbtiles"});
 
 	  db.transaction(function(tx) {
-		tx.executeSql("select count(id) as cnt from test_table;", [], function(tx, res) {
+alert("going to do the transaction");
+		tx.executeSql("select count(*) as cnt from tiles;", [], function(tx, res) {
+console.log("after the select");
 		  console.log("res.rows.length: " + res.rows.length + " -- should be 1");
 		  console.log("res.rows.item(0).cnt: " + res.rows.item(0).cnt + " -- should be 1");
+		}, function(error) {
+alert("this is the rrror");
 		});
 	});
+alert("end of the testdb");
 }
 
 function testFs() {
