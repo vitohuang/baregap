@@ -306,7 +306,7 @@ function resolveFileUrl(path, callback) {
 					console.log(entries[i].name);
 					result.push(entries[i].name);
 				}
-			}
+			});
 
 			callback(null, result);
 		}
