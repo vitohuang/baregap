@@ -36,6 +36,7 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
+alert("device ready");
         app.receivedEvent('deviceready');
 
 	// Init map
@@ -169,23 +170,26 @@ var msg;			// the span to show messages
 localFileName = 'test.mbtiles';
 remoteFile = 'http://178.62.13.207/test.mbtiles';
 
-function go() {
+function go(targetPath) {
 	var fs;				// file system object
 	var ft;				// TileTransfer object
 
+/*
 alert("app directory:"+cordova.file.applicationDirectory);
 alert("app storage directory:"+cordova.file.applicationStorageDirectory);
 alert("cache data directory:"+cordova.file.cacheDirectory);
 alert("data directory:"+cordova.file.dataDirectory);
 alert("external root data directory:"+cordova.file.externalRootDirectory);
 alert("external storage data directory:"+cordova.file.externalApplicationStorageDirectory);
+*/
 
+	var targetDirectory = targetPath || cordova.file.dataDirectory;
 	msg = document.getElementById('message');
 	
 	console.log('requesting file system...');
-	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dEntry) {
+	window.resolveLocalFileSystemURL(targetDirectory, function(dEntry) {
 alert("resolved data Directory:"+dEntry.name+" -> path:"+dEntry.fullPath);
-		var fileFullPath = cordova.file.externalDataDirectory + localFileName;
+		var fileFullPath = targetDirectory + localFileName;
 alert("file full path: "+fileFullPath);
 		// check to see if files already exists
 		var file = dEntry.getFile(localFileName, {create: false}, function () {
@@ -205,7 +209,7 @@ alert("file not exist creating it now");
 
 			console.log('downloading sqlite file...');
 			ft = new FileTransfer();
-			ft.download(remoteFile, cordova.file.externalDataDirectory +  localFileName, function (entry) {
+			ft.download(remoteFile, targetDirectory +  localFileName, function (entry) {
 alert("download complete");
 msg.innerHTML = "download complete:"+entry.fullPath;
 				console.log('download complete: ' + entry.fullPath);
@@ -221,7 +225,7 @@ alert(JSON.stringify(error));
 
 	},
 	function(error) {
-		alert("failed to open the externalDataDirectory:"+JSON.stringify(error));
+		alert("failed to open the dataDirectory:"+JSON.stringify(error));
 	});
 
 	/*
@@ -269,7 +273,7 @@ resizeMap();
 
 	document.body.removeChild(msg);
 
-	var map = new L.Map('map', {
+	map = new L.Map('map', {
 		center: new L.LatLng(40.6681, -111.9364),
 		zoom: 11
 	});
@@ -277,4 +281,34 @@ resizeMap();
 	var lyr = new L.TileLayer.MBTiles('', {maxZoom: 2, scheme: 'tms'}, db);
 
 	map.addLayer(lyr);
+}
+
+function clearMap() {
+	if (map) {
+		map.eachLayer(function(layer) {
+			map.removeLayer(layer);
+		});
+	}
+}
+
+function resolveFileUrl(path, callback) {
+	window.resolveLocalFileSystemURL(path, function(entry) {
+		console.log(entry);
+		console.log(entry.fullPath);
+		console.log(entry.name);
+		if (entry.isFile) {
+			console.log("entry is a file");
+		} else {
+			var result = [];
+			var reader = entry.createReader();
+			reader.readEntries(function(entries) {
+				for (var i = 0; i < entries.length; i++) {
+					console.log(entries[i].name);
+					result.push(entries[i].name);
+				}
+			}
+
+			callback(null, result);
+		}
+	});
 }
