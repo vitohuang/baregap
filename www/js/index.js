@@ -176,6 +176,47 @@ function go() {
 	msg = document.getElementById('message');
 	
 	console.log('requesting file system...');
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dEntry) {
+		var fileFullPath = dEntry.fullPath + '/'+localFileName;
+alert("file full path: "+fileFullPath);
+		// check to see if files already exists
+		var file = dEntry.getFile(localFileName, {create: false}, function () {
+			// file exists
+			console.log('exists');
+
+alert("file already exist");
+			msg.innerHTML = 'File already exists on device. Building map...';
+
+			buildMap(fileFullPath);
+		}, function () {
+alert("file not exist creating it now");
+			// file does not exist
+			console.log('does not exist');
+
+			msg.innerHTML = 'Downloading file...';
+
+			console.log('downloading sqlite file...');
+			ft = new FileTransfer();
+			ft.download(remoteFile, dEntry.fullPath + '/' + localFileName, function (entry) {
+alert("download complete");
+msg.innerHTML("download complete:"+entry.fullPath);
+				console.log('download complete: ' + entry.fullPath);
+
+				buildMap(fileFullPath);
+
+			}, function (error) {
+alert(JSON.stringify(error));
+			msg.innerHTML = 'error with download'+JSON.stringify(error);
+				console.log('error with download', error);
+			});
+		});
+
+	},
+	function(error) {
+		alert("failed to open the externalDataDirectory:"+JSON.stringify(error));
+	});
+
+	/*
 	window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 		console.log('file system retrieved.');
 		fs = fileSystem;
@@ -210,11 +251,12 @@ alert(JSON.stringify(error));
 			});
 		});
 	});
+	*/
 }
 
-function buildMap() {
+function buildMap(fileFullPath) {
 resizeMap();
-	var db = new SQLitePlugin(localFileName);
+	var db = new SQLitePlugin(fileFullPath);
 
 	document.body.removeChild(msg);
 
