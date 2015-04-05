@@ -46,7 +46,7 @@ go();
 	testDb();
 
 	// Test the file system path
-	testFs();
+	//testFs();
 
     },
     // Update DOM on a Received Event
@@ -173,14 +173,22 @@ function go() {
 	var fs;				// file system object
 	var ft;				// TileTransfer object
 
+alert("app directory:"+cordova.file.applicationDirectory);
+alert("app storage directory:"+cordova.file.applicationStorageDirectory);
+alert("cache data directory:"+cordova.file.cacheDirectory);
+alert("data directory:"+cordova.file.dataDirectory);
+alert("external root data directory:"+cordova.file.externalRootDirectory);
+alert("external storage data directory:"+cordova.file.externalApplicationStorageDirectory);
+
 	msg = document.getElementById('message');
 	
 	console.log('requesting file system...');
-	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dEntry) {
-		var fileFullPath = dEntry.fullPath + '/'+localFileName;
+	window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(dEntry) {
+alert("resolved data Directory:"+dEntry.name+" -> path:"+dEntry.fullPath);
+		var fileFullPath = dEntry.fullPath + localFileName;
 alert("file full path: "+fileFullPath);
 		// check to see if files already exists
-		var file = dEntry.getFile(localFileName, {create: false}, function () {
+		var file = dEntry.getFile(localFileName, {create: true, exclusive: false}, function () {
 			// file exists
 			console.log('exists');
 
@@ -197,7 +205,7 @@ alert("file not exist creating it now");
 
 			console.log('downloading sqlite file...');
 			ft = new FileTransfer();
-			ft.download(remoteFile, dEntry.fullPath + '/' + localFileName, function (entry) {
+			ft.download(remoteFile, dEntry.fullPath + localFileName, function (entry) {
 alert("download complete");
 msg.innerHTML("download complete:"+entry.fullPath);
 				console.log('download complete: ' + entry.fullPath);
