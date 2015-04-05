@@ -43,7 +43,7 @@ var app = {
 
 go();
 	// Trying to get the db
-	testDb();
+	//testDb();
 
 	// Test the file system path
 	//testFs();
@@ -183,12 +183,12 @@ alert("external storage data directory:"+cordova.file.externalApplicationStorage
 	msg = document.getElementById('message');
 	
 	console.log('requesting file system...');
-	window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(dEntry) {
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dEntry) {
 alert("resolved data Directory:"+dEntry.name+" -> path:"+dEntry.fullPath);
-		var fileFullPath = dEntry.fullPath + localFileName;
+		var fileFullPath = cordova.file.externalDataDirectory + localFileName;
 alert("file full path: "+fileFullPath);
 		// check to see if files already exists
-		var file = dEntry.getFile(localFileName, {create: true, exclusive: false}, function () {
+		var file = dEntry.getFile(localFileName, {create: false}, function () {
 			// file exists
 			console.log('exists');
 
@@ -205,9 +205,9 @@ alert("file not exist creating it now");
 
 			console.log('downloading sqlite file...');
 			ft = new FileTransfer();
-			ft.download(remoteFile, dEntry.fullPath + localFileName, function (entry) {
+			ft.download(remoteFile, cordova.file.externalDataDirectory +  localFileName, function (entry) {
 alert("download complete");
-msg.innerHTML("download complete:"+entry.fullPath);
+msg.innerHTML = "download complete:"+entry.fullPath;
 				console.log('download complete: ' + entry.fullPath);
 
 				buildMap(fileFullPath);
@@ -263,8 +263,9 @@ alert(JSON.stringify(error));
 }
 
 function buildMap(fileFullPath) {
+alert("build map:"+fileFullPath);
 resizeMap();
-	var db = new SQLitePlugin(fileFullPath);
+	var db = window.sqlitePlugin.openDatabase({name: fileFullPath});
 
 	document.body.removeChild(msg);
 
