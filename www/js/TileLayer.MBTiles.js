@@ -29,8 +29,10 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 	alert("got tile from sqlite db");
 alert(res.rows.length);
 	for (var i = 0; i < res.rows.length; i++) {
+alert("inside the for loop");
 		var row = res.rows.item(i);
-		alert.log(JSON.stringify(row));
+alert(row);
+	//	alert.log(JSON.stringify(row));
 		src = base64Prefix + row.tile_data;
 	}
 		
