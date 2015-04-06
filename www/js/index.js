@@ -16,6 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+// Path for the database
+var dbAbsPath;
+var dbFullPath;
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -37,6 +42,10 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+
+console.log("device is ready");
+	// Maksure the database directory is there
+	//ensureDatabaseDirectory();
 
 	// Init map
 	//initMap();
@@ -156,14 +165,13 @@ alert("external root data directory:"+cordova.file.externalRootDirectory);
 alert("external storage data directory:"+cordova.file.externalApplicationStorageDirectory);
 */
 
-	var targetDirectory = targetPath || cordova.file.dataDirectory;
+	var targetDirectory = targetPath || dbAbsPath;
 	msg = document.getElementById('message');
 	
 	console.log('requesting file system...');
 	window.resolveLocalFileSystemURL(targetDirectory, function(dEntry) {
 alert("resolved data Directory:"+dEntry.name+" -> path:"+dEntry.fullPath);
-		var fileFullPath = targetDirectory + localFileName;
-alert("file full path: "+fileFullPath);
+alert("file full path in go() to checked: "+localFileName);
 		// check to see if files already exists
 		var file = dEntry.getFile(localFileName, {create: false}, function () {
 			// file exists
@@ -172,7 +180,7 @@ alert("file full path: "+fileFullPath);
 alert("file already exist");
 			msg.innerHTML = 'File already exists on device. Building map...';
 
-			buildMap(fileFullPath);
+			buildMap(localFileName);
 		}, function () {
 alert("file not exist creating it now");
 			// file does not exist
@@ -188,7 +196,7 @@ alert("download complete");
 msg.innerHTML = "download complete:"+entry.fullPath;
 				console.log('download complete: ' + entry.fullPath);
 
-				buildMap(fileFullPath);
+				buildMap(localFileName);
 
 			}, function (error) {
 alert(JSON.stringify(error));
@@ -203,12 +211,11 @@ alert(JSON.stringify(error));
 	});
 }
 
-function buildMap(fileFullPath) {
+function buildMap(dbFileName) {
 	// Replace the file:// at the start
-	filePath = fileFullPath.replace('file://', '');	
-alert("build map:"+filePath);
+alert("build map:"+dbFileName);
 resizeMap();
-	var db = window.sqlitePlugin.openDatabase({name: filePath});
+	var db = window.sqlitePlugin.openDatabase({name: dbFileName});
 
 alert("db:");
 alert(JSON.stringify(db));
@@ -250,10 +257,10 @@ function clearMap() {
 function bindDomEvents() {
 console.log("bind dom events");
 	// App data refresh button event
-	$('#refresh-data-directory').click(function(event) {
-		refreshDirectory($('#app-data-list'), cordova.file.dataDirectory);
+	$('#refresh-db-directory').click(function(event) {
+		refreshDirectory($('#app-db-list'), dbAbsPath);
 	});
-	refreshDirectory($('#app-data-list'), cordova.file.dataDirectory);
+	refreshDirectory($('#app-db-list'), dbAbsPath);
 
 	// Delete the test.mbtiles file
 	$('#delete-the-route').click(function(event) {
@@ -278,6 +285,7 @@ console.log("bind dom events");
 }
 
 function refreshDirectory(directoryEl, path) {
+	console.log("going to refresh directory:"+path);
 	// Get the directory content
 	getDirectory(path, function(error, result) {
 		// Empty the directory el content
@@ -323,5 +331,36 @@ function getDirectory(path, callback) {
 				callback(null, result);
 			}, callback);
 		}
+	});
+}
+
+// Make sure the databases directory is there, created if its not there
+function ensureDatabaseDirectory(callback) {
+	// Make sure there is a callback
+	callback = callback || function(){};
+
+	// Set all variables
+	var directoryName = 'databases';
+	dbAbsPath = cordova.file.applicationStorageDirectory + directoryName + '/';
+	dbFullPath = dbAbsPath.replace('file://', '');
+
+	console.log("ensure the database diretory is there");
+	console.log('dbAbsPath:'+dbAbsPath+ ' -> '+dbFullPath);
+
+	window.resolveLocalFileSystemURL(dbAbsPath, callback, function(error) {
+		// Something is wrong - probably need to create the directory
+		console.log("the db abs path is no there - something is wrong");
+		console.log(error);
+
+		// Try to create the directory
+		window.resolveLocalFileSystemURL(cordova.file.applicationStorageDirectory, function(entry) {
+			console.log("got hold of the application storage directory");
+			entry.getDirectory(directoryName, {create: true, exclusive: false}, function(dbEntry) {
+				console.log("datatabase directory created");
+				callback(null, dbEntry);
+			});
+
+		});
+		
 	});
 }
