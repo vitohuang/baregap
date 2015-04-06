@@ -260,7 +260,8 @@ resizeMap();
 	alert("going to do the transaction");
 
 		tx.executeSql(
-			'SELECT name FROM sqlite_master WHERE type = "table";',
+			//'SELECT name FROM sqlite_master WHERE type = "table";',
+			'SELECT zoom_level, tile_column, tile_row, tile_id, grid_id  FROM map limit 10;',
 			[],
 			function(ttx, result) {
 				alert("result from sqlite_master");
@@ -268,7 +269,7 @@ resizeMap();
 				if (result != null && result.rows != null) {
 					alert("there are stuff in the result and rows");
 					alert(result.rows.length);
-					for (var j = 1; j < result.rows.length; j++) {
+					for (var j = 0; j < result.rows.length; j++) {
 						var row = result.rows.item(j);
 						alert("row result: "+JSON.stringify(row));
 					}
