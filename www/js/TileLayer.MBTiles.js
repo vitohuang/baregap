@@ -13,22 +13,51 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		L.Util.setOptions(this, options);
 	},
 	getTileUrl: function (tilePoint) {
+		// Create a deferred object
+		var r = $.Deferred();
+
 		var z = tilePoint.z;
 		var x = tilePoint.x;
 		var y = tilePoint.y;
-		var base64Prefix = 'data:image/gif;base64,';
+		var base64Prefix = 'data:image/png;base64,';
 
-console.log("gettint tile url: z -> "+z+' x -> '+x+' y->'+y);
-		this.mbTilesDB.executeSql("SELECT tile_data FROM images INNER JOIN map ON images.tile_id = map.tile_id WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function (res) {
-alert("got tile from sqlite db");
-			var src = base64Prefix + res.rows[0].tile_data;
-alert("src for it");
-alert(src);
-		}, function (er, error) {
-alert("something wrong with the sql");
-alert(JSON.stringify(er));
-alert(JSON.stringify(error));
-			console.log('error with executeSql', er);
+		var src;
+
+		this.mbTilesDB.transaction(function(tx) {
+		console.log("gettint tile url: z -> "+z+' x -> '+x+' y->'+y);
+			tx.executeSql("SELECT tile_data FROM images INNER JOIN map ON images.tile_id = map.tile_id WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function (tx, res) {
+	alert("got tile from sqlite db");
+	alert(JSON.stringify(res.rows.item[0]));
+				src = base64Prefix + res.rows.item[0].tile_data;
+	alert("src for it");
+	alert(src);
+				// Call resolve on the deferred object
+				r.resolve(src);
+			}, function (er, error) {
+	alert("something wrong with the sql");
+	alert(JSON.stringify(er));
+	alert(JSON.stringify(error));
+				console.log('error with executeSql', er);
+			});
+
+		});
+
+		// Return the deferred object
+		return r;
+	},
+	_loadTile: function (tile, tilePoint) {
+		tile._layer  = this;
+		tile.onload  = this._tileOnLoad;
+		tile.onerror = this._tileOnError;
+
+		this._adjustTilePoint(tilePoint);
+		this.getTileUrl(tilePoint).done(function(src) {
+			tile.src = src;
+		});
+
+		this.fire('tileloadstart', {
+			tile: tile,
+			url: tile.src
 		});
 	},
 });

@@ -258,6 +258,7 @@ resizeMap();
 	//var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1, createFromLocation: 1});
 	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1});
 
+/*
 	// Do some test transaction
 	db.transaction(function(tx) {
 	alert("going to do the transaction");
@@ -282,7 +283,8 @@ resizeMap();
 			errorHandler
 		);
 	});
-/*
+*/
+alert("going to display map");
 	// Get a new map
 	map = new L.Map('map', {
 		center: new L.LatLng(40.6681, -111.9364),
@@ -293,7 +295,6 @@ resizeMap();
 
 alert("after full layer - adding it to map");
 	lyr.addTo(map);
-*/
 }
 
 function clearMap() {
