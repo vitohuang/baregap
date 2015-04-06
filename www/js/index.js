@@ -242,6 +242,7 @@ alert(JSON.stringify(error));
 }
 
 function buildMap(dbFileName) {
+var i = 1;
 	// Replace the file:// at the start
 alert("build map:"+dbFileName);
 resizeMap();
@@ -251,14 +252,30 @@ db.transaction(function(tx) {
 alert("going to do the transaction");
     // demonstrate PRAGMA:
     db.executeSql("PRAGMA database_list;", [], function(res) {
+i++;
+alert("i:"+i);
 alert("executed sql : pragma database_list;" + JSON.stringify(res));
+alert(JSON.stringify(res.rows));
 
       db.transaction(function(tx) {
         tx.executeSql('SELECT name FROM sqlite_master WHERE type = "table"', [], function(tx, res) {
+i++;
+alert("i:"+i);
 alert("result from select");
 alert(JSON.stringify(res));
-alert(JSON.stringify(res.row));
+alert(JSON.stringify(res.rows));
+alert("res.rows.length: " + res.rows.length + " -- should be 1");
 
+alert("res.rows.items");
+alert(JSON.stringify(res.rows.item));
+
+if (res.rows) {
+	for (var i = 0; i < res.rows.length; i++) {
+		alert("table name: "+res.rows.item(i));
+	}
+}
+
+alert("res.rows.item(0).name: " + res.rows.item(0).name+ "-----");
           console.log("res.rows.length: " + res.rows.length + " -- should be 1");
           console.log("res.rows.item(0).cnt: " + res.rows.item(0).cnt + " -- should be 1");
         }, function(error) {
@@ -277,6 +294,7 @@ alert(abc);
 
 
 
+/*
 	// Get a new map
 	map = new L.Map('map', {
 		center: new L.LatLng(40.6681, -111.9364),
@@ -288,6 +306,7 @@ alert(abc);
 alert("after full layer - adding it to map");
 alert(JSON.stringify(lyr));
 	map.addLayer(lyr);
+*/
 }
 
 function clearMap() {
