@@ -241,34 +241,42 @@ alert(JSON.stringify(error));
 	});
 }
 
+// Handlers
+function errorHandler(tx, error) {
+alert("error:"+error.message+" code: "+error.code);
+}
+
+function nullHandler(){};
+
 function buildMap(dbFileName) {
 var i = 1;
 	// Replace the file:// at the start
 alert("build map:"+dbFileName);
 resizeMap();
 	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1});
-db.transaction(function(tx) {
-alert("going to do the transaction");
-    tx.executeSql('DROP TABLE IF EXISTS test_table');
-    tx.executeSql('CREATE TABLE IF NOT EXISTS test_table (id integer primary key, data text, data_num integer)');
 
-    // demonstrate PRAGMA:
-    db.executeSql("pragma table_info (test_table);", [], function(res) {
-alert("executed sql: pragma");
-      console.log("PRAGMA res: " + JSON.stringify(res));
-    });
+	// Do some test transaction
+	db.transaction(function(tx) {
+	alert("going to do the transaction");
 
-        tx.executeSql("select count(id) as cnt from test_table;", [], function(tx, res) {
-alert("result from select");
-alert(JSON.stringify(res));
-
-          console.log("res.rows.length: " + res.rows.length + " -- should be 1");
-          console.log("res.rows.item(0).cnt: " + res.rows.item(0).cnt + " -- should be 1");
-        }, function (error) {
-		alert("something wrong with select count");
-alert(JSON.stringify(error));
+		tx.executeSql(
+			'SELECT name FROM sqlite_master WHERE type = "table";',
+			[],
+			function(ttx, result) {
+				alert("result from sqlite_master");
+				//alert(JSON.stringify(result));
+				if (result != null && result.rows != null) {
+					alert("there are stuff in the result and rows");
+					alert(result.rows.length);
+					for (var j = 1; j < result.rows.length; j++) {
+						var row = result.rows.item(j);
+						alert("row result: "+JSON.stringify(row));
+					}
+				}
+			},
+			errorHandler
+		);
 	});
-  });
 
 /*
 db.transaction(function(tx) {
