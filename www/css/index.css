@@ -79,3 +79,8 @@ body {
     animation:fade 3000ms infinite;
     -webkit-animation:fade 3000ms infinite;
 }
+
+input {
+	width: 70%;
+	height: 200px;
+}
