@@ -180,7 +180,7 @@ console.log("go() to get remote file and put it in the local direxory");
 	// The filename of the local mbtiles file
 	localFileName = localFileName || 'test.db';
 	// the url of the remote mbtiles file to be downloaded
-	remoteFile = remoteFile || 'http://178.62.13.207/test.mbtiles';
+	remoteFile = remoteFile || 'http://178.62.13.207/tt.db';
 	var msg;			// the span to show messages
 
 	var fs;				// file system object
@@ -203,14 +203,15 @@ alert("external storage data directory:"+cordova.file.externalApplicationStorage
 alert("resolved data Directory:"+dEntry.name+" -> path:"+dEntry.fullPath);
 alert("file full path in go() to checked: "+localFileName);
 		// check to see if files already exists
-		var file = dEntry.getFile(localFileName, {create: false}, function () {
+		var file = dEntry.getFile(localFileName, {create: false}, function (entry) {
 			// file exists
 			console.log('exists');
 
 alert("file already exist");
+alert(JSON.stringify(entry));
 			msg.innerHTML = 'File already exists on device. Building map...';
 
-			buildMap(localFileName);
+			//buildMap(localFileName);
 		}, function () {
 alert("file not exist creating it now");
 			// file does not exist
@@ -371,13 +372,15 @@ console.log("bind dom events");
 		});
 	});
 
+var i = 0;
 	// Download remote file event
 	$('#download-button').click(function(event) {
 		var remoteFile = $('#remote-file').val();
 
 		if (remoteFile) {
+i++;
 			console.log("going to download: "+remoteFile);
-			go(remoteFile, 'download.mbtiles');
+			go(remoteFile, 'download'+i+'.db');
 		}
 	});
 }
