@@ -248,6 +248,21 @@ resizeMap();
 
 alert("db:");
 alert(JSON.stringify(db));
+db.transaction(function(tx) {
+alert("going to do the transaction");
+    // demonstrate PRAGMA:
+    db.executeSql("PRAGMA database_list;", [], function(res) {
+alert("executed sql: pragma" + JSON.stringify(res));
+    }, function(error, abc) {
+alert("there is something wrong with execute pragma"+JSON.stringify(error));
+alert(error.message);
+alert(abc);
+	});
+
+  });
+
+
+
 	  db.transaction(function(tx) {
 alert("going to do a transaction");
 		tx.executeSql("select count(*) as cnt from tiles;", [], function(tx, res) {
