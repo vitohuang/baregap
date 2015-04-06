@@ -45,12 +45,15 @@ var app = {
 
 console.log("device is ready");
 	// Maksure the database directory is there
-	//ensureDatabaseDirectory();
+	ensureDatabaseDirectory(function(error, result) {
+		console.log("ok, the database directory is there, no go to fetch test.mbtiles");
+		go();
+
+	});
 
 	// Init map
 	//initMap();
 
-go();
 	// Trying to get the db
 	//testDb();
 
@@ -147,6 +150,8 @@ alert(JSON.stringify(error));
 }
 
 function go(remoteFile, localFileName, targetPath) {
+console.log("go() to get remote file and put it in the local direxory");
+
 	// The filename of the local mbtiles file
 	localFileName = localFileName || 'test.mbtiles';
 	// the url of the remote mbtiles file to be downloaded
