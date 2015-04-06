@@ -210,6 +210,20 @@ alert("build map:"+filePath);
 resizeMap();
 	var db = window.sqlitePlugin.openDatabase({name: filePath});
 
+alert("db:");
+alert(JSON.stringify(db));
+	  db.transaction(function(tx) {
+alert("going to do a transaction");
+		tx.executeSql("select count(*) as cnt from tiles;", [], function(tx, res) {
+console.log("after the select");
+		  console.log("res.rows.length: " + res.rows.length + " -- should be 1");
+		  console.log("res.rows.item(0).cnt: " + res.rows.item(0).cnt + " -- should be 1");
+		}, function(error) {
+alert("this is the error trying to count tiles:"+error);
+alert(JSON.stringify(error));
+		});
+	});
+
 	// Get a new map
 	map = new L.Map('map', {
 		center: new L.LatLng(40.6681, -111.9364),
