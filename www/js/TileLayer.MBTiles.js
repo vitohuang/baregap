@@ -26,24 +26,26 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		this.mbTilesDB.transaction(function(tx) {
 		console.log("gettint tile url: z -> "+z+' x -> '+x+' y->'+y);
 			tx.executeSql("SELECT tile_data FROM images INNER JOIN map ON images.tile_id = map.tile_id WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function (tx, res) {
-	alert("got tile from sqlite db");
-alert(res.rows.length);
+	//alert("got tile from sqlite db");
+//alert(res.rows.length);
 	for (var i = 0; i < res.rows.length; i++) {
-alert("inside the for loop");
+//alert("inside the for loop");
 		var row = res.rows.item(i);
-alert(row);
+//alert(row);
 	//	alert.log(JSON.stringify(row));
 		src = base64Prefix + row.tile_data;
 	}
 		
-	alert("src for it");
-	alert(src);
+	//alert("src for it");
+	//alert(src);
 				// Call resolve on the deferred object
 				r.resolve(src);
 			}, function (er, error) {
+/*
 	alert("something wrong with the sql");
 	alert(JSON.stringify(er));
 	alert(JSON.stringify(error));
+*/
 				console.log('error with executeSql', er);
 			});
 
