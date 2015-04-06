@@ -329,7 +329,6 @@ alert(abc);
 
 
 
-/*
 	// Get a new map
 	map = new L.Map('map', {
 		center: new L.LatLng(40.6681, -111.9364),
@@ -339,9 +338,7 @@ alert(abc);
 	var lyr = new L.TileLayer.MBTiles('', {maxZoom: 2, scheme: 'tms'}, db);
 
 alert("after full layer - adding it to map");
-alert(JSON.stringify(lyr));
 	map.addLayer(lyr);
-*/
 }
 
 function clearMap() {
