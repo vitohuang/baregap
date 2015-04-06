@@ -94,7 +94,7 @@ function getDeviceInfo() {
 
 var map = null;
 var home = [51.505, -0.08];
-var defaultZoom = 4;
+var defaultZoom = 2;
 function initMap() {
 	var mapEl = $('#map');
 
@@ -285,13 +285,18 @@ resizeMap();
 	});
 */
 alert("going to display map");
-	// Get a new map
-	map = new L.Map('map', {
-		center: new L.LatLng(40.6681, -111.9364),
-		zoom: 11
+	// Make a new map without zoom control
+	map = L.map('map', {
+		zoomControl: false
 	});
 
-	var lyr = new L.TileLayer.MBTiles('', {maxZoom: 2, scheme: 'tms'}, db);
+	// Set the view
+	map.setView(
+		home,
+		defaultZoom
+	);
+
+	var lyr = new L.TileLayer.MBTiles('', {maxZoom: 4, scheme: 'tms'}, db);
 
 alert("after full layer - adding it to map");
 	lyr.addTo(map);
