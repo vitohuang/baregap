@@ -178,7 +178,7 @@ function go(remoteFile, localFileName, targetPath) {
 console.log("go() to get remote file and put it in the local direxory");
 
 	// The filename of the local mbtiles file
-	localFileName = localFileName || 'test.mbtiles';
+	localFileName = localFileName || 'test.db';
 	// the url of the remote mbtiles file to be downloaded
 	remoteFile = remoteFile || 'http://178.62.13.207/test.mbtiles';
 	var msg;			// the span to show messages
@@ -260,8 +260,8 @@ resizeMap();
 	alert("going to do the transaction");
 
 		tx.executeSql(
-			//'SELECT name FROM sqlite_master WHERE type = "table";',
-			'SELECT zoom_level, tile_column, tile_row, tile_id, grid_id  FROM map limit 10;',
+			'SELECT name FROM sqlite_master WHERE type = "table";',
+			//'SELECT zoom_level, tile_column, tile_row, tile_id, grid_id  FROM map limit 10;',
 			[],
 			function(ttx, result) {
 				alert("result from sqlite_master");
