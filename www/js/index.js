@@ -55,7 +55,7 @@ console.log("device is ready");
 	//initMap();
 
 	// Trying to get the db
-	testDb();
+	//testDb();
 
 	// Test the file system path
 	//testFs();
@@ -167,6 +167,7 @@ alert(JSON.stringify(res));
         });
       });
 
+
     }, function(e) {
       console.log("ERROR: " + e.message);
     });
@@ -246,13 +247,26 @@ alert("build map:"+dbFileName);
 resizeMap();
 	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1});
 
-alert("db:");
-alert(JSON.stringify(db));
 db.transaction(function(tx) {
 alert("going to do the transaction");
     // demonstrate PRAGMA:
     db.executeSql("PRAGMA database_list;", [], function(res) {
-alert("executed sql: pragma" + JSON.stringify(res));
+alert("executed sql : pragma database_list;" + JSON.stringify(res));
+
+      db.transaction(function(tx) {
+        tx.executeSql('SELECT name FROM sqlite_master WHERE type = "table"', [], function(tx, res) {
+alert("result from select");
+alert(JSON.stringify(res));
+alert(JSON.stringify(res.row));
+
+          console.log("res.rows.length: " + res.rows.length + " -- should be 1");
+          console.log("res.rows.item(0).cnt: " + res.rows.item(0).cnt + " -- should be 1");
+        }, function(error) {
+
+	alert("there is something wrong with the selecte:"+JSON.stringify(error));
+	});
+      });
+
     }, function(error, abc) {
 alert("there is something wrong with execute pragma"+JSON.stringify(error));
 alert(error.message);
@@ -262,18 +276,6 @@ alert(abc);
   });
 
 
-
-	  db.transaction(function(tx) {
-alert("going to do a transaction");
-		tx.executeSql("select count(*) as cnt from tiles;", [], function(tx, res) {
-console.log("after the select");
-		  console.log("res.rows.length: " + res.rows.length + " -- should be 1");
-		  console.log("res.rows.item(0).cnt: " + res.rows.item(0).cnt + " -- should be 1");
-		}, function(error) {
-alert("this is the error trying to count tiles:"+JSON.stringify(error));
-alert(JSON.stringify(error));
-		});
-	});
 
 	// Get a new map
 	map = new L.Map('map', {
