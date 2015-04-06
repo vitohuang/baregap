@@ -255,7 +255,7 @@ console.log("after the select");
 		  console.log("res.rows.length: " + res.rows.length + " -- should be 1");
 		  console.log("res.rows.item(0).cnt: " + res.rows.item(0).cnt + " -- should be 1");
 		}, function(error) {
-alert("this is the error trying to count tiles:"+error);
+alert("this is the error trying to count tiles:"+JSON.stringify(error));
 alert(JSON.stringify(error));
 		});
 	});
