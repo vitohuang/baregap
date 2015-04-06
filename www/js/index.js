@@ -250,11 +250,12 @@ alert("error:"+error.message+" code: "+error.code);
 function nullHandler(){};
 
 function buildMap(dbFileName) {
+dbFileName = 'test.mbtiles';
 var i = 1;
 	// Replace the file:// at the start
 alert("build map:"+dbFileName);
 resizeMap();
-	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1});
+	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1, createFromLocation: 1});
 
 	// Do some test transaction
 	db.transaction(function(tx) {
