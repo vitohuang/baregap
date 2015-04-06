@@ -180,7 +180,7 @@ console.log("go() to get remote file and put it in the local direxory");
 	// The filename of the local mbtiles file
 	localFileName = localFileName || 'test.db';
 	// the url of the remote mbtiles file to be downloaded
-	remoteFile = remoteFile || 'http://178.62.13.207/tt.db';
+	remoteFile = remoteFile || 'http://178.62.13.207/test.mbtiles';
 	var msg;			// the span to show messages
 
 	var fs;				// file system object
@@ -250,12 +250,13 @@ alert("error:"+error.message+" code: "+error.code);
 function nullHandler(){};
 
 function buildMap(dbFileName) {
-dbFileName = 'test.mbtiles';
+//dbFileName = 'test.mbtiles';
 var i = 1;
 	// Replace the file:// at the start
 alert("build map:"+dbFileName);
 resizeMap();
-	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1, createFromLocation: 1});
+	//var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1, createFromLocation: 1});
+	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1});
 
 	// Do some test transaction
 	db.transaction(function(tx) {
