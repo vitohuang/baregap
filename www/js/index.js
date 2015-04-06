@@ -36,7 +36,6 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
-alert("device ready");
         app.receivedEvent('deviceready');
 
 	// Init map
@@ -49,6 +48,7 @@ go();
 	// Test the file system path
 	//testFs();
 
+	bindDomEvents();
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -100,9 +100,6 @@ function initMap() {
 		defaultZoom
 	);
 
-console.log(home);
-console.log(defaultZoom);
-console.log("going to add tile layer");
 	// Set the tile layer
 	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 	    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -116,9 +113,10 @@ function resizeMap(el) {
 	// Find the window size
 	mapEl.width($(document).width());
 	mapEl.height($(document).height());
-console.log("this is the height");
-var mapHeight = mapEl.height();
-console.log(mapHeight);
+
+	console.log("this is the height");
+	var mapHeight = mapEl.height();
+	console.log(mapHeight);
 }
 
 function testDb() {
@@ -139,38 +137,13 @@ alert(JSON.stringify(error));
 	});
 }
 
-function testFs() {
-	window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-	window.requestFileSystem(LocalFileSystem.PERSISTENT, 0 , gotFs, fail);
-}
+function go(remoteFile, localFileName, targetPath) {
+	// The filename of the local mbtiles file
+	localFileName = localFileName || 'test.mbtiles';
+	// the url of the remote mbtiles file to be downloaded
+	remoteFile = remoteFile || 'http://178.62.13.207/test.mbtiles';
+	var msg;			// the span to show messages
 
-function fail() {
-	alert("can't get file system");
-}
-
-function gotFs(fileSystem) {
-	window.fileSystem = fileSystem;
-
-	/*
-	// Try to read the files within the root directory
-	var directoryReader = fileSystem.root.createReader();
-	directoryReader.readEntries(function(entries) {
-		for (var i = 0; i < entries.length; i++) {
-			console.log(entries[i].name);
-		}
-	});
-	*/
-}
-
-
-var localFileName;	// the filename of the local mbtiles file
-var remoteFile;		// the url of the remote mbtiles file to be downloaded
-var msg;			// the span to show messages
-
-localFileName = 'test.mbtiles';
-remoteFile = 'http://178.62.13.207/test.mbtiles';
-
-function go(targetPath) {
 	var fs;				// file system object
 	var ft;				// TileTransfer object
 
@@ -208,6 +181,7 @@ alert("file not exist creating it now");
 			msg.innerHTML = 'Downloading file...';
 
 			console.log('downloading sqlite file...');
+			console.log(remoteFile);
 			ft = new FileTransfer();
 			ft.download(remoteFile, targetDirectory +  localFileName, function (entry) {
 alert("download complete");
@@ -227,52 +201,16 @@ alert(JSON.stringify(error));
 	function(error) {
 		alert("failed to open the dataDirectory:"+JSON.stringify(error));
 	});
-
-	/*
-	window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
-		console.log('file system retrieved.');
-		fs = fileSystem;
-
-		// check to see if files already exists
-		var file = fs.root.getFile(localFileName, {create: false}, function () {
-			// file exists
-			console.log('exists');
-
-			msg.innerHTML = 'File already exists on device. Building map...';
-
-			buildMap();
-		}, function () {
-			// file does not exist
-			console.log('does not exist');
-
-			msg.innerHTML = 'Downloading file...';
-
-			console.log('downloading sqlite file...');
-			ft = new FileTransfer();
-			ft.download(remoteFile, fs.root.fullPath + '/' + localFileName, function (entry) {
-alert("download complete");
-msg.innerHTML("download complete:"+entry.fullPath);
-				console.log('download complete: ' + entry.fullPath);
-
-				buildMap();
-
-			}, function (error) {
-alert(JSON.stringify(error));
-			msg.innerHTML = 'error with download'+JSON.stringify(error);
-				console.log('error with download', error);
-			});
-		});
-	});
-	*/
 }
 
 function buildMap(fileFullPath) {
-alert("build map:"+fileFullPath);
+	// Replace the file:// at the start
+	filePath = fileFullPath.replace('file://', '');	
+alert("build map:"+filePath);
 resizeMap();
-	var db = window.sqlitePlugin.openDatabase({name: fileFullPath});
+	var db = window.sqlitePlugin.openDatabase({name: filePath});
 
-	document.body.removeChild(msg);
-
+	// Get a new map
 	map = new L.Map('map', {
 		center: new L.LatLng(40.6681, -111.9364),
 		zoom: 11
@@ -280,6 +218,8 @@ resizeMap();
 
 	var lyr = new L.TileLayer.MBTiles('', {maxZoom: 2, scheme: 'tms'}, db);
 
+alert("after full layer - adding it to map");
+alert(JSON.stringify(lyr));
 	map.addLayer(lyr);
 }
 
@@ -291,24 +231,83 @@ function clearMap() {
 	}
 }
 
-function resolveFileUrl(path, callback) {
+
+// Bind all dom events
+function bindDomEvents() {
+console.log("bind dom events");
+	// App data refresh button event
+	$('#refresh-data-directory').click(function(event) {
+		refreshDirectory($('#app-data-list'), cordova.file.dataDirectory);
+	});
+	refreshDirectory($('#app-data-list'), cordova.file.dataDirectory);
+
+	// Delete the test.mbtiles file
+	$('#delete-the-route').click(function(event) {
+		console.log('going to delet test.mbtiles');
+		
+		getDirectory(cordova.file.dataDirectory + 'test.mbtiles', function(error, result) {
+			result.remove(function(entry) {
+				console.log("test mbtiles deleted");
+			});
+		});
+	});
+
+	// Download remote file event
+	$('#download-button').click(function(event) {
+		var remoteFile = $('#remote-file').val();
+
+		if (remoteFile) {
+			console.log("going to download: "+remoteFile);
+			go(remoteFile, 'download.mbtiles');
+		}
+	});
+}
+
+function refreshDirectory(directoryEl, path) {
+	// Get the directory content
+	getDirectory(path, function(error, result) {
+		// Empty the directory el content
+		directoryEl.empty();
+
+		console.log("get result from get directory");
+		result.forEach(function(entry) {
+			// Create a list element
+			if (entry.isFile) {
+				entry.file(function(file) {
+
+					directoryEl.append($('<li>'+file.name+' - '+file.size+'</li>'));
+				});
+			} else {
+					directoryEl.append($('<li>'+entry.name+' - D</li>'));
+			}
+
+		});
+	});
+}
+// Get directory content - will return directory entries or file if path is file
+function getDirectory(path, callback) {
 	window.resolveLocalFileSystemURL(path, function(entry) {
+		console.log("resolve path");
 		console.log(entry);
 		console.log(entry.fullPath);
 		console.log(entry.name);
+
+		// Just return the file entry if its file
 		if (entry.isFile) {
-			console.log("entry is a file");
+			callback(null, entry);
 		} else {
+			// Read the directory content
 			var result = [];
 			var reader = entry.createReader();
 			reader.readEntries(function(entries) {
 				for (var i = 0; i < entries.length; i++) {
 					console.log(entries[i].name);
-					result.push(entries[i].name);
+					result.push(entries[i]);
 				}
-			});
 
-			callback(null, result);
+				// Callback
+				callback(null, result);
+			}, callback);
 		}
 	});
 }
