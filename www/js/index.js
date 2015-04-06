@@ -262,8 +262,8 @@ resizeMap();
 	alert("going to do the transaction");
 
 		tx.executeSql(
-			'SELECT name FROM sqlite_master WHERE type = "table";',
-			//'SELECT zoom_level, tile_column, tile_row, tile_id, grid_id  FROM map limit 10;',
+			//'SELECT name FROM sqlite_master WHERE type = "table";',
+			'SELECT zoom_level, tile_column, tile_row, tile_id, grid_id  FROM map limit 10;',
 			[],
 			function(ttx, result) {
 				alert("result from sqlite_master");

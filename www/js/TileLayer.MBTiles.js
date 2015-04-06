@@ -14,9 +14,14 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		var y = tilePoint.y;
 		var base64Prefix = 'data:image/gif;base64,';
 
+console.log("gettint tile url: z -> "+z+' x -> '+x+' y->'+y);
 		this.mbTilesDB.executeSql("SELECT tile_data FROM images INNER JOIN map ON images.tile_id = map.tile_id WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function (res) {
+alert("got tile from sqlite db");
 			tile.src = base64Prefix + res.rows[0].tile_data;
-		}, function (er) {
+		}, function (er, error) {
+alert("something wrong with the sql");
+alert(JSON.stringify(er));
+alert(JSON.stringify(error));
 			console.log('error with executeSql', er);
 		});
 	},
