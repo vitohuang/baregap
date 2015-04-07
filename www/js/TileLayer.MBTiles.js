@@ -53,7 +53,30 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		// Return the deferred object
 		return r;
 	},
-	_loadTile: function (tile, tilePoint) {
+	_addTile: function (tilePoint, container) {
+		var tilePos = this._getTilePos(tilePoint);
+
+		// get unused tile - or create a new tile
+		var tile = this._getTile();
+
+		/*
+		Chrome 20 layouts much faster with top/left (verify with timeline, frames)
+		Android 4 browser has display issues with top/left and requires transform instead
+		(other browsers don't currently care) - see debug/hacks/jitter.html for an example
+		*/
+		L.DomUtil.setPosition(tile, tilePos, L.Browser.chrome);
+
+		this._tiles[tilePoint.x + ':' + tilePoint.y] = tile;
+
+		this._loadTile(tile, tilePoint, function() {
+			if (tile.parentNode !== this._tileContainer) {
+				container.appendChild(tile);
+			}
+		}.bind(this));
+
+	},
+	_loadTile: function (tile, tilePoint, cb) {
+		that = this;
 		tile._layer  = this;
 		tile.onload  = this._tileOnLoad;
 		tile.onerror = this._tileOnError;
@@ -61,11 +84,14 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		this._adjustTilePoint(tilePoint);
 		this.getTileUrl(tilePoint).done(function(src) {
 			tile.src = src;
-		});
 
-		this.fire('tileloadstart', {
-			tile: tile,
-			url: tile.src
-		});
-	},
+			this.fire('tileloadstart', {
+				tile: tile,
+				url: tile.src
+			});
+
+			cb();
+		}.bind(this));
+
+	}
 });
