@@ -200,20 +200,15 @@ alert("external storage data directory:"+cordova.file.externalApplicationStorage
 	
 	console.log('requesting file system...');
 	window.resolveLocalFileSystemURL(targetDirectory, function(dEntry) {
-alert("resolved data Directory:"+dEntry.name+" -> path:"+dEntry.fullPath);
-alert("file full path in go() to checked: "+localFileName);
 		// check to see if files already exists
 		var file = dEntry.getFile(localFileName, {create: false}, function (entry) {
 			// file exists
 			console.log('exists');
 
-alert("file already exist");
-alert(JSON.stringify(entry));
 			msg.innerHTML = 'File already exists on device. Building map...';
 
 			buildMap(localFileName);
 		}, function () {
-alert("file not exist creating it now");
 			// file does not exist
 			console.log('does not exist');
 
@@ -223,14 +218,12 @@ alert("file not exist creating it now");
 			console.log(remoteFile);
 			ft = new FileTransfer();
 			ft.download(remoteFile, targetDirectory +  localFileName, function (entry) {
-alert("download complete");
 msg.innerHTML = "download complete:"+entry.fullPath;
 				console.log('download complete: ' + entry.fullPath);
 
 				buildMap(localFileName);
 
 			}, function (error) {
-alert(JSON.stringify(error));
 			msg.innerHTML = 'error with download'+JSON.stringify(error);
 				console.log('error with download', error);
 			});
@@ -238,7 +231,6 @@ alert(JSON.stringify(error));
 
 	},
 	function(error) {
-		alert("failed to open the dataDirectory:"+JSON.stringify(error));
 	});
 }
 
@@ -253,7 +245,6 @@ function buildMap(dbFileName) {
 //dbFileName = 'test.mbtiles';
 var i = 1;
 	// Replace the file:// at the start
-alert("build map:"+dbFileName);
 resizeMap();
 	//var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1, createFromLocation: 1});
 	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1});
@@ -284,7 +275,6 @@ resizeMap();
 		);
 	});
 */
-alert("going to display map");
 	// Make a new map without zoom control
 	map = L.map('map', {
 		zoomControl: false
@@ -302,7 +292,6 @@ alert("going to display map");
 
 	var lyr = new L.TileLayer.MBTiles('', {maxZoom: 4, minZoom: 1, scheme: 'tms'}, db);
 
-alert("after full layer - adding it to map");
 	lyr.addTo(map);
 }
 
