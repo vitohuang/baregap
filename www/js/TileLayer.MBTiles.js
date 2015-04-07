@@ -11,10 +11,7 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 
 		L.Util.setOptions(this, options);
 	},
-	getTileUrl: function (tilePoint) {
-		// Create a deferred object
-		var r = $.Deferred();
-
+	getTileUrl: function (tilePoint, callback) {
 		var z = tilePoint.z;
 		var x = tilePoint.x;
 		var y = tilePoint.y;
@@ -38,20 +35,15 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 	//alert("src for it");
 	//alert(src);
 				// Call resolve on the deferred object
-				r.resolve(src);
+				callback(src);
 			}, function (er, error) {
-/*
-	alert("something wrong with the sql");
-	alert(JSON.stringify(er));
-	alert(JSON.stringify(error));
-*/
+	//alert("something wrong with the sql");
+	//alert(JSON.stringify(er));
+	//alert(JSON.stringify(error));
 				console.log('error with executeSql', er);
 			});
 
 		});
-
-		// Return the deferred object
-		return r;
 	},
 	_addTile: function (tilePoint, container) {
 		var tilePos = this._getTilePos(tilePoint);
@@ -69,29 +61,41 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		this._tiles[tilePoint.x + ':' + tilePoint.y] = tile;
 
 		this._loadTile(tile, tilePoint, function() {
+			console.log("_loadTitle callback function");
+			console.log("going to add title:"+tilePoint.x+" y: "+tilePoint.y);
 			if (tile.parentNode !== this._tileContainer) {
+				console.log("going to apend to child");
 				container.appendChild(tile);
 			}
 		}.bind(this));
+		//});
 
 	},
 	_loadTile: function (tile, tilePoint, cb) {
-		that = this;
 		tile._layer  = this;
 		tile.onload  = this._tileOnLoad;
 		tile.onerror = this._tileOnError;
 
+this.something = "something";
+console.log("going to load tile:"+JSON.stringify(tilePoint));
 		this._adjustTilePoint(tilePoint);
-		this.getTileUrl(tilePoint).done(function(src) {
+		this.getTileUrl(tilePoint, function(src) {
+			console.log("got back the src:"+src);
+			console.log("this is got back from src");
+			console.log(typeof this.fire);
+			console.log(this.something);
+			console.log("this is got back from src after tiledjfkdjfdkjfkdjfjdkfj");
 			tile.src = src;
 
 			this.fire('tileloadstart', {
 				tile: tile,
 				url: tile.src
 			});
+			console.log("this is after fire tile load start");
 
-			cb();
+			cb(true);
 		}.bind(this));
+		//});
 
 	}
 });
