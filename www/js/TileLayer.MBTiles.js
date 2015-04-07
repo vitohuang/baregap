@@ -12,9 +12,9 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 
 		L.Util.setOptions(this, options);
 	},
-	getTileUrl: function (tilePoint) {
+	getTileUrl: function (tilePoint, callback) {
 		// Create a deferred object
-		var r = $.Deferred();
+		//var r = $.Deferred();
 
 		var z = tilePoint.z;
 		var x = tilePoint.x;
@@ -38,8 +38,9 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		
 	//alert("src for it");
 	//alert(src);
+		callback(src);
 				// Call resolve on the deferred object
-				r.resolve(src);
+				//r.resolve(src);
 			}, function (er, error) {
 /*
 	alert("something wrong with the sql");
@@ -52,20 +53,22 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		});
 
 		// Return the deferred object
-		return r;
+		//return r;
 	},
-	_loadTile: function (tile, tilePoint) {
+	_loadTile: function (tile, tilePoint, callback) {
 		tile._layer  = this;
 		tile.onload  = this._tileOnLoad;
 		tile.onerror = this._tileOnError;
 
 		this._adjustTilePoint(tilePoint);
-		this.getTileUrl(tilePoint).done(function(src) {
+		this.getTileUrl(tilePoint, function(src) {
 			tile.src = src;
 			this.fire('tileloadstart', {
 				tile: tile,
 				url: tile.src
 			});
+
+			callback(true);
 		}.bind(this));
 
 	},
@@ -84,11 +87,12 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 
 		this._tiles[tilePoint.x + ':' + tilePoint.y] = tile;
 
-		this._loadTile(tile, tilePoint);
+		this._loadTile(tile, tilePoint, function(){
+			if (tile.parentNode !== this._tileContainer) {
+				container.appendChild(tile);
+			}
+		}.bind(this));
 
-		if (tile.parentNode !== this._tileContainer) {
-			container.appendChild(tile);
-		}
 	}
 
 });
