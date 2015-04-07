@@ -302,7 +302,7 @@ alert("going to display map");
 
 	var lyr = new L.TileLayer.MBTiles('', {maxZoom: 4, minZoom: 1, scheme: 'tms'}, db);
 
-alert("after full layer - adding it to map");
+alert("after full layeriiiiiiii - adding it to map");
 	lyr.addTo(map);
 }
 
