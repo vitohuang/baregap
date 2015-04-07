@@ -62,11 +62,11 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		this._adjustTilePoint(tilePoint);
 		this.getTileUrl(tilePoint).done(function(src) {
 			tile.src = src;
-		});
+			this.fire('tileloadstart', {
+				tile: tile,
+				url: tile.src
+			});
+		}.bind(this));
 
-		this.fire('tileloadstart', {
-			tile: tile,
-			url: tile.src
-		});
 	},
 });
