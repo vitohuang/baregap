@@ -296,7 +296,11 @@ alert("going to display map");
 		defaultZoom
 	);
 
-	var lyr = new L.TileLayer.MBTiles('', {maxZoom: 4, scheme: 'tms'}, db);
+	// Limit the bound to the world
+	var bounds = L.latLngBounds([[-85,-180.0],[85,180.0]]);
+	map.setMaxBounds(bounds);
+
+	var lyr = new L.TileLayer.MBTiles('', {maxZoom: 4, minZoom: 1, scheme: 'tms'}, db);
 
 alert("after full layer - adding it to map");
 	lyr.addTo(map);
