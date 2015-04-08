@@ -123,8 +123,8 @@ function resizeMap(el) {
 	var mapEl = el || $('#map');
 
 	// Find the window size
-	mapEl.width($(document).width());
-	mapEl.height($(document).height());
+	mapEl.width($(document).width() * 0.5);
+	mapEl.height($(document).height() * 0.5);
 
 	console.log("this is the height");
 	var mapHeight = mapEl.height();
@@ -255,6 +255,7 @@ var i = 1;
 	// Replace the file:// at the start
 alert("build map:"+dbFileName);
 resizeMap();
+var db = null;
 	//var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1, createFromLocation: 1});
 	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1});
 
@@ -300,7 +301,7 @@ alert("going to display map");
 	var bounds = L.latLngBounds([[-85,-180.0],[85,180.0]]);
 	map.setMaxBounds(bounds);
 
-	var lyr = new L.TileLayer.MBTiles('', {maxZoom: 4, minZoom: 1, scheme: 'tms'}, db);
+	var lyr = new L.TileLayer.MBTiles('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {maxZoom: 4, minZoom: 1, scheme: 'tms'}, db);
 
 alert("after full layeriiiiiiii - adding it to map");
 	lyr.addTo(map);

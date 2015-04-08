@@ -9,10 +9,13 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		this.mbTilesDB = db;
 
 		this._url = url;
-
-		L.Util.setOptions(this, options);
+		options = L.setOptions(this, options);
+	console.log("this is the end of initialize");
+		// Call the parent initialization
+		//L.TileLayer.prototype.initialize.call(this, url, options);
 	},
 	getTileUrl: function (tilePoint, callback) {
+		console.log("get tile url");
 		// Create a deferred object
 		//var r = $.Deferred();
 
@@ -23,8 +26,23 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 
 		var src;
 
+
+		/*
+		setTimeout(function() {
+			var result = L.Util.template(this._url, L.extend({
+				s: this._getSubdomain(tilePoint),
+				z: tilePoint.z,
+				x: tilePoint.x,
+				y: tilePoint.y
+			}, this.options));
+
+		var msg = "gettint tile url: z -> "+z+' x -> '+x+' y->'+y;
+		console.log(msg + ' -> ' + result);
+			callback(result);
+		}.bind(this), Math.round(Math.random() *10) * 500);
+		*/
 		this.mbTilesDB.transaction(function(tx) {
-		console.log("gettint tile url: z -> "+z+' x -> '+x+' y->'+y);
+		console.log();
 			tx.executeSql("SELECT tile_data FROM images INNER JOIN map ON images.tile_id = map.tile_id WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function (tx, res) {
 	//alert("got tile from sqlite db");
 //alert(res.rows.length);
@@ -36,6 +54,7 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		src = base64Prefix + row.tile_data;
 	}
 		
+	console.log(msg + ' callback ');
 	//alert("src for it");
 	//alert(src);
 		callback(src);
@@ -46,7 +65,7 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 	alert("something wrong with the sql");
 	alert(JSON.stringify(er));
 	alert(JSON.stringify(error));
-*/
+	*/
 				console.log('error with executeSql', er);
 			});
 
@@ -56,12 +75,14 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		//return r;
 	},
 	_loadTile: function (tile, tilePoint, callback) {
+		console.log("load tile called");
 		tile._layer  = this;
 		tile.onload  = this._tileOnLoad;
 		tile.onerror = this._tileOnError;
 
 		this._adjustTilePoint(tilePoint);
 		this.getTileUrl(tilePoint, function(src) {
+			console.log("this is getting back:"+src);
 			tile.src = src;
 			this.fire('tileloadstart', {
 				tile: tile,
@@ -69,28 +90,6 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 			});
 
 			callback(true);
-		}.bind(this));
-
-	},
-	_addTile: function (tilePoint, container) {
-		var tilePos = this._getTilePos(tilePoint);
-
-		// get unused tile - or create a new tile
-		var tile = this._getTile();
-
-		/*
-		Chrome 20 layouts much faster with top/left (verify with timeline, frames)
-		Android 4 browser has display issues with top/left and requires transform instead
-		(other browsers don't currently care) - see debug/hacks/jitter.html for an example
-		*/
-		L.DomUtil.setPosition(tile, tilePos, L.Browser.chrome);
-
-		this._tiles[tilePoint.x + ':' + tilePoint.y] = tile;
-
-		this._loadTile(tile, tilePoint, function(){
-			if (tile.parentNode !== this._tileContainer) {
-				container.appendChild(tile);
-			}
 		}.bind(this));
 
 	}
