@@ -52,7 +52,7 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 //alert(row);
 	//	alert.log(JSON.stringify(row));
 		src = base64Prefix + row.tile_data;
-		alert(msg + ' -> got tile data');
+		//alert(msg + ' -> got tile data');
 	}
 		
 	console.log(msg + ' callback ');
@@ -82,7 +82,7 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		tile.onerror = this._tileOnError;
 
 		var msg = "load tile : z -> "+tilePoint.z+' x -> '+tilePoint.x+' y->'+tilePoint.y;
-		alert(msg);
+		//alert(msg);
 		this._adjustTilePoint(tilePoint);
 		this.getTileUrl(tilePoint, function(src) {
 			console.log("this is getting back:"+src);
