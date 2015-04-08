@@ -27,6 +27,7 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		var src;
 
 
+		var msg = "gettint tile url: z -> "+z+' x -> '+x+' y->'+y;
 		/*
 		setTimeout(function() {
 			var result = L.Util.template(this._url, L.extend({
@@ -36,7 +37,6 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 				y: tilePoint.y
 			}, this.options));
 
-		var msg = "gettint tile url: z -> "+z+' x -> '+x+' y->'+y;
 		console.log(msg + ' -> ' + result);
 			callback(result);
 		}.bind(this), Math.round(Math.random() *10) * 500);
@@ -52,6 +52,7 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 //alert(row);
 	//	alert.log(JSON.stringify(row));
 		src = base64Prefix + row.tile_data;
+		alert(msg + ' -> got tile data');
 	}
 		
 	console.log(msg + ' callback ');
@@ -80,6 +81,8 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		tile.onload  = this._tileOnLoad;
 		tile.onerror = this._tileOnError;
 
+		var msg = "load tile : z -> "+tilePoint.z+' x -> '+tilePoint.x+' y->'+tilePoint.y;
+		alert(msg);
 		this._adjustTilePoint(tilePoint);
 		this.getTileUrl(tilePoint, function(src) {
 			console.log("this is getting back:"+src);
