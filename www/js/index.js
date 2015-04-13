@@ -21,6 +21,9 @@
 var dbAbsPath;
 var dbFullPath;
 
+// Logger
+var vlog;
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -43,9 +46,16 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
 
-console.log("device is ready");
+	// Start the logger
+	vlog = new vLogger($('#log-display'));
+
+	vlog.add("Device is ready");
+
+	console.log("device is ready");
 	// Maksure the database directory is there
 	ensureDatabaseDirectory(function(error, result) {
+		vlog.add("The database directory is on the system");
+
 		console.log("ok, the database directory is there, no go to fetch test.mbtiles");
 		go();
 
