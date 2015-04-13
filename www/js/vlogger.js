@@ -10,7 +10,7 @@ var vLogger = function(display, storage) {
 }
 vLogger.prototype.add = function(msg) {
     var d = new Date();
-    this.data.push(d+": "+msg);
+    this.data.push(d+":"+arguments.callee.caller.name+" -> "+msg);
     
     this.updateDisplay();
     

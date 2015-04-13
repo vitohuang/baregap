@@ -210,20 +210,20 @@ alert("external storage data directory:"+cordova.file.externalApplicationStorage
 	
 	console.log('requesting file system...');
 	window.resolveLocalFileSystemURL(targetDirectory, function(dEntry) {
-alert("resolved data Directory:"+dEntry.name+" -> path:"+dEntry.fullPath);
-alert("file full path in go() to checked: "+localFileName);
+vlog.add("resolved data Directory:"+dEntry.name+" -> path:"+dEntry.fullPath);
+vlog.add("file full path in go() to checked: "+localFileName);
 		// check to see if files already exists
 		var file = dEntry.getFile(localFileName, {create: false}, function (entry) {
 			// file exists
 			console.log('exists');
 
-alert("file already exist");
-alert(JSON.stringify(entry));
+vlog.add("file already exist");
+vlog.add(JSON.stringify(entry));
 			msg.innerHTML = 'File already exists on device. Building map...';
 
 			buildMap(localFileName);
 		}, function () {
-alert("file not exist creating it now");
+vlog.add("file not exist download it now");
 			// file does not exist
 			console.log('does not exist');
 
@@ -233,14 +233,15 @@ alert("file not exist creating it now");
 			console.log(remoteFile);
 			ft = new FileTransfer();
 			ft.download(remoteFile, targetDirectory +  localFileName, function (entry) {
-alert("download complete");
+vlog.add("download complete");
 msg.innerHTML = "download complete:"+entry.fullPath;
 				console.log('download complete: ' + entry.fullPath);
 
 				buildMap(localFileName);
 
 			}, function (error) {
-alert(JSON.stringify(error));
+				vlog.add("there is something wrong with download");
+vlog.add(JSON.stringify(error));
 			msg.innerHTML = 'error with download'+JSON.stringify(error);
 				console.log('error with download', error);
 			});
@@ -248,7 +249,7 @@ alert(JSON.stringify(error));
 
 	},
 	function(error) {
-		alert("failed to open the dataDirectory:"+JSON.stringify(error));
+		vlog.add("failed to open the dataDirectory:"+JSON.stringify(error));
 	});
 }
 
@@ -263,39 +264,13 @@ function buildMap(dbFileName) {
 //dbFileName = 'test.mbtiles';
 var i = 1;
 	// Replace the file:// at the start
-alert("build map:"+dbFileName);
+vlog.add("build map:"+dbFileName);
 resizeMap();
 var db = null;
 	//var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1, createFromLocation: 1});
 	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1});
 
-/*
-	// Do some test transaction
-	db.transaction(function(tx) {
-	alert("going to do the transaction");
-
-		tx.executeSql(
-			//'SELECT name FROM sqlite_master WHERE type = "table";',
-			'SELECT * FROM images limit 2;',
-			[],
-			function(ttx, result) {
-				alert("result from sqlite_master");
-				//alert(JSON.stringify(result));
-				if (result != null && result.rows != null) {
-					alert("there are stuff in the result and rows");
-					alert(result.rows.length);
-					for (var j = 0; j < result.rows.length; j++) {
-						var row = result.rows.item(j);
-						alert("row result: "+JSON.stringify(row));
-						alert(row);
-					}
-				}
-			},
-			errorHandler
-		);
-	});
-*/
-alert("going to display map");
+vlog.add("going to display map");
 	// Make a new map without zoom control
 	map = L.map('map', {
 		zoomControl: false
@@ -313,7 +288,7 @@ alert("going to display map");
 
 	var lyr = new L.TileLayer.MBTiles('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {maxZoom: 4, minZoom: 1, scheme: 'tms'}, db);
 
-alert("after full layeriiiiiiii - adding it to map");
+vlog.add("after full layeriiiiiiii - adding it to map");
 	lyr.addTo(map);
 }
 
@@ -419,16 +394,20 @@ function ensureDatabaseDirectory(callback) {
 	dbAbsPath = cordova.file.applicationStorageDirectory + directoryName + '/';
 	dbFullPath = dbAbsPath.replace('file://', '');
 
+	vlog.add('go function -> dbAbsPath:'+dbAbsPath+ ' -> '+dbFullPath);
+
 	console.log("ensure the database diretory is there");
 	console.log('dbAbsPath:'+dbAbsPath+ ' -> '+dbFullPath);
 
 	window.resolveLocalFileSystemURL(dbAbsPath, callback, function(error) {
 		// Something is wrong - probably need to create the directory
+		vlog.add("the db abs path is no there - something is wrong, try to create directory");
 		console.log("the db abs path is no there - something is wrong");
 		console.log(error);
 
 		// Try to create the directory
 		window.resolveLocalFileSystemURL(cordova.file.applicationStorageDirectory, function(entry) {
+			vlog.add("got hold of the application storage directory");
 			console.log("got hold of the application storage directory");
 			entry.getDirectory(directoryName, {create: true, exclusive: false}, function(dbEntry) {
 				console.log("datatabase directory created");
