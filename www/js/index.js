@@ -51,6 +51,7 @@ var app = {
 
 	vlog.add("Device is ready");
 
+	vlog.add(getDeviceInfo());
 	console.log("device is ready");
 	// Maksure the database directory is there
 	ensureDatabaseDirectory(function(error, result) {
