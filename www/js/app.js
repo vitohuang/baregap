@@ -6,15 +6,18 @@ var dbFullPath;
 var cordovaApp = {
     // Application Constructor
     initialize: function() {
-	    alert("this is the cordova app init");
         this.bindEvents();
+
+	// Check if there is a cordova global variable or not
+	if (typeof cordova == 'undefined') {
+		bootstrapAngular();
+	}
     },
     // Bind Event Listeners
     //
     // Bind any events that are required on startup. Common events are:
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
-	alert("trying to bind event");
         document.addEventListener('deviceready', this.onDeviceReady, false);
 
 	// Orientation change
@@ -25,7 +28,7 @@ var cordovaApp = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
-        app.receivedEvent('deviceready');
+        cordovaApp.receivedEvent('deviceready');
 
 console.log("device is ready");
 
@@ -47,6 +50,9 @@ console.log("device is ready");
 	//testFs();
 
 	//bindDomEvents();
+	
+	// Start the angular app
+	bootstrapAngular();
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -69,6 +75,15 @@ console.log("device is ready");
 
 
 };
+
+function bootstrapAngular() {
+	angular.element(document).ready(function() {
+		angular.bootstrap(document, ['starter']);
+	});
+}
+
+// Start the cordova app
+cordovaApp.initialize();
 
 // Get device info
 function getDeviceInfo() {
@@ -362,6 +377,7 @@ function refreshDirectory(directoryEl, path) {
 }
 // Get directory content - will return directory entries or file if path is file
 function getDirectory(path, callback) {
+console.log("going to get directory:"+path);
 	window.resolveLocalFileSystemURL(path, function(entry) {
 		console.log("resolve path");
 		console.log(entry);
@@ -418,28 +434,20 @@ function ensureDatabaseDirectory(callback) {
 		
 	});
 }
-console.log("going to start the app outside the angular js");
 // Ionic Starter App
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers'])
+angular.module('starter', ['ionic', 'starter.controllers','leaflet-directive'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if (window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-    }
     if (window.StatusBar) {
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
-
-    console.log("going to start the app inside");
   });
 })
 
@@ -453,23 +461,35 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     controller: 'AppCtrl'
   })
 
-  .state('app.search', {
-    url: "/search",
+  .state('app.map', {
+    url: "/map",
     views: {
       'menuContent': {
-        templateUrl: "templates/search.html"
+        templateUrl: "templates/map.html",
+  	controller: 'MapCtrl'
       }
     }
   })
 
-  .state('app.browse', {
-    url: "/browse",
+  .state('app.maps', {
+    url: "/maps",
     views: {
       'menuContent': {
-        templateUrl: "templates/browse.html"
+        templateUrl: "templates/maps.html",
+  	controller: 'MapsCtrl'
       }
     }
   })
+    .state('app.log', {
+      url: "/log",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/log.html",
+          controller: 'LogCtrl'
+        }
+      }
+    })
+
     .state('app.playlists', {
       url: "/playlists",
       views: {
@@ -490,5 +510,20 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/search');
-});
+  $urlRouterProvider.otherwise('/app/map');
+})
+.factory('directory', ['$window', function(win) {
+	return {
+		'list': function(path, callback) {
+			getDirectory(path, callback);
+			/*
+			return [
+				{ name: 'file1'},
+				{ name: 'file2'},
+				{ name: 'file3'}
+			];
+			*/
+		}
+	};
+
+}]);

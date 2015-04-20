@@ -1,0 +1,21 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Download</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeDownload()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <form ng-submit="doDownload()">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">Url</span>
+          <input type="text" ng-model="downloadUrl">
+        </label>
+        <label class="item">
+          <button class="button button-block button-positive" type="submit">Download</button>
+        </label>
+      </div>
+    </form>
+  </ion-content>
+</ion-modal-view>
