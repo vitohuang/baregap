@@ -32,7 +32,9 @@ angular.module('starter.controllers', [])
     }, 1000);
   };
 })
-.controller('MapCtrl', ["$scope", "$q", "leafletData", function($scope,$q, leafletData) {
+.controller('MapCtrl', ["$scope", "$q", "$stateParams",  "leafletData", function($scope,$q, $stateParams, leafletData) {
+	console.log("this is the map controller");
+	console.log($stateParams);
 	$scope.london = {
 		lat: 51.505,
 		lng: -0.09,
@@ -89,13 +91,26 @@ console.log(dbAbsPath);
 }])
 
 .controller('MapsCtrl', ['$scope', 'directory', function($scope, directory) {
-console.log('list directory content');
+	console.log('list directory content');
 
-console.log(dbAbsPath);
-	directory.list(dbAbsPath, function(error, result) {
-		console.log("get content from the:"+dbAbsPath);
-		$scope.maps = result;
-	});
+	console.log(dbAbsPath);
+	// Refresh the view
+	$scope.doRefresh = function() {
+		console.log("do refresh");
+		directory.list(dbAbsPath, function(error, result) {
+			console.log("get content from the:"+dbAbsPath);
+			$scope.maps = result;
+
+			console.log("going to broadcast the refresh is complete");
+			// Its complete
+			$scope.$broadcast('scroll.refreshComplete');
+
+			// Kick the digest cycle
+			$scope.$apply();
+		});
+	}
+
+	$scope.doRefresh();
   //$scope.maps = directory.list();
 }])
 

@@ -515,7 +515,11 @@ angular.module('starter', ['ionic', 'starter.controllers','leaflet-directive'])
 .factory('directory', ['$window', function(win) {
 	return {
 		'list': function(path, callback) {
-			getDirectory(path, callback);
+			if (typeof path == 'undefined') {
+				callback(true, null);
+			} else {
+				getDirectory(path, callback);
+			}
 			/*
 			return [
 				{ name: 'file1'},

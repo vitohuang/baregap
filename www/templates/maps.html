@@ -1,7 +1,9 @@
 <ion-view view-title="Local Maps">
   <ion-content>
+    <ion-refresher pulling-text="Pull to refresh" on-refresh="doRefresh()">
+    </ion-refresher>
     <ion-list>
-      <ion-item ng-repeat="map in maps">
+      <ion-item ng-repeat="map in maps" href="#/app/map/{map.name}">
         {{map.name}}
       </ion-item>
     </ion-list>
