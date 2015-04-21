@@ -73,7 +73,7 @@ if (typeof cordova == 'undefined') {
 
 } else {
 console.log("going to add the mbtiles");
-var dbFileName = 'test.mbtiles';
+var dbFileName = 'test.db';
 	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1});
 
 	var lyr = new L.TileLayer.MBTiles('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {maxZoom: 4, minZoom: 1, scheme: 'tms'}, db);
