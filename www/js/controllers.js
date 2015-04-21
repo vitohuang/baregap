@@ -99,7 +99,22 @@ console.log(dbAbsPath);
 		console.log("do refresh");
 		directory.list(dbAbsPath, function(error, result) {
 			console.log("get content from the:"+dbAbsPath);
-			$scope.maps = result;
+			
+			var files = [];
+			// Check if the results is file or directory
+			result.forEach(function(entry) {
+				console.log("checking out the entry:"+entry.name);
+				// Create a file element
+				if (entry.isFile) {
+					console.log("its a file");
+					entry.file(function(file) {
+						files.push(file);
+					});
+				} else {
+					files.push(entry);
+				}
+			});
+			$scope.maps = files;
 
 			console.log("going to broadcast the refresh is complete");
 			// Its complete

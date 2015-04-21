@@ -36,7 +36,7 @@ console.log("device is ready");
 	ensureDatabaseDirectory(function(error, result) {
 		console.log("ok, the database directory is there, no go to fetch test.mbtiles");
 		alert("cool so we have the database directory");
-		//go();
+		go();
 
 	});
 
@@ -185,7 +185,6 @@ console.log("go() to get remote file and put it in the local direxory");
 	localFileName = localFileName || 'test.db';
 	// the url of the remote mbtiles file to be downloaded
 	remoteFile = remoteFile || 'http://178.62.13.207/test.mbtiles';
-	var msg;			// the span to show messages
 
 	var fs;				// file system object
 	var ft;				// TileTransfer object
@@ -200,7 +199,6 @@ alert("external storage data directory:"+cordova.file.externalApplicationStorage
 */
 
 	var targetDirectory = targetPath || dbAbsPath;
-	msg = document.getElementById('message');
 	
 	console.log('requesting file system...');
 	window.resolveLocalFileSystemURL(targetDirectory, function(dEntry) {
@@ -213,29 +211,22 @@ alert("file full path in go() to checked: "+localFileName);
 
 alert("file already exist");
 alert(JSON.stringify(entry));
-			msg.innerHTML = 'File already exists on device. Building map...';
 
-			buildMap(localFileName);
 		}, function () {
 alert("file not exist creating it now");
 			// file does not exist
 			console.log('does not exist');
 
-			msg.innerHTML = 'Downloading file...';
 
 			console.log('downloading sqlite file...');
 			console.log(remoteFile);
 			ft = new FileTransfer();
 			ft.download(remoteFile, targetDirectory +  localFileName, function (entry) {
 alert("download complete");
-msg.innerHTML = "download complete:"+entry.fullPath;
 				console.log('download complete: ' + entry.fullPath);
-
-				buildMap(localFileName);
 
 			}, function (error) {
 alert(JSON.stringify(error));
-			msg.innerHTML = 'error with download'+JSON.stringify(error);
 				console.log('error with download', error);
 			});
 		});
@@ -520,13 +511,6 @@ angular.module('starter', ['ionic', 'starter.controllers','leaflet-directive'])
 			} else {
 				getDirectory(path, callback);
 			}
-			/*
-			return [
-				{ name: 'file1'},
-				{ name: 'file2'},
-				{ name: 'file3'}
-			];
-			*/
 		}
 	};
 
