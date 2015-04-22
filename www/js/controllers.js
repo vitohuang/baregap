@@ -1,8 +1,10 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', ['$scope', '$ionicModal', '$timeout', 'downloader', function($scope, $ionicModal, $timeout, downloader) {
   // Form data for the download modal
-  $scope.downloadUrl = '';
+  $scope.download = {
+	  url: ''
+  }
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/download.html', {
@@ -21,17 +23,45 @@ angular.module('starter.controllers', [])
     $scope.modal.show();
   };
 
+  // Listen to remove
+  $scope.$on('$destroy', function() {
+	  $scope.modal.remove();
+  });
+
+  // Use the <a> tag as url parser
+  var urlParser = document.createElement('a');
+
   // Perform the download action when the user submits the download form
   $scope.doDownload= function() {
-    console.log('Doing download', $scope.loginData);
+    console.log('Doing download:'+$scope.download.url);
+    var rawUrl = $scope.download.url;
+    var url = 'http://'+rawUrl;
 
-    // Simulate a download delay. Remove this and replace with your download 
-    // code if using a download system
-    $timeout(function() {
-      $scope.closeDownload();
-    }, 1000);
+    urlParser.href = url;
+
+    console.log(urlParser.pathname);
+    if (urlParser.pathname) {
+	    // Get the last bit of the pathname as local file name
+	    var fileName = urlParser.pathname.split('/').pop();
+	    console.log(fileName);
+
+	    // Download service to download
+	    downloader.get(url, fileName).then(function(result) {
+		    console.log("get back from download:"+result);
+		    // clear the download url
+		    $scope.download.url = '';
+
+		    console.log("going to close the download modal");
+		    // Simulate a download delay. Remove this and replace with your download 
+		    // code if using a download system
+		    $timeout(function() {
+		      $scope.closeDownload();
+		    }, 1000);
+	    });
+    }
+
   };
-})
+}])
 .controller('MapCtrl', ["$scope", "$q", "$stateParams",  "leafletData", function($scope,$q, $stateParams, leafletData) {
 	console.log("this is the map controller");
 	console.log($stateParams);

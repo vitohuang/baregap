@@ -178,8 +178,10 @@ alert(JSON.stringify(res));
   });
 }
 
-function go(remoteFile, localFileName, targetPath) {
+function go(remoteFile, localFileName, targetPath, cb) {
 console.log("go() to get remote file and put it in the local direxory");
+	// Assign default callback
+	cb = cb || angular.noop;
 
 	// The filename of the local mbtiles file
 	localFileName = localFileName || 'test.db';
@@ -209,6 +211,7 @@ alert("file full path in go() to checked: "+localFileName);
 			// file exists
 			console.log('exists');
 
+			cb(true, 'already exist');
 alert("file already exist");
 alert(JSON.stringify(entry));
 
@@ -223,16 +226,19 @@ alert("file not exist creating it now");
 			ft = new FileTransfer();
 			ft.download(remoteFile, targetDirectory +  localFileName, function (entry) {
 alert("download complete");
+				cb(true, 'download complete');
 				console.log('download complete: ' + entry.fullPath);
 
 			}, function (error) {
 alert(JSON.stringify(error));
+				cb(false, 'error with download')
 				console.log('error with download', error);
 			});
 		});
 
 	},
 	function(error) {
+		cb(false, 'Failed to open the data directory');
 		alert("failed to open the dataDirectory:"+JSON.stringify(error));
 	});
 }
@@ -503,6 +509,34 @@ angular.module('starter', ['ionic', 'starter.controllers','leaflet-directive'])
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/maps');
 })
+.factory('downloader', ['$window', '$q', '$timeout', function($window, $q, $timeout) {
+	return {
+		'get': function(remoteUrl, fileName) {
+			console.log("downloader -> going to download:"+remoteUrl);
+			console.log("save it as:"+fileName);
+			var deferred = $q.defer();
+
+			// Going to download
+			go(remoteUrl, fileName, null, function(error, result) {
+				console.log("back from go function");
+				console.log(error);
+				console.log(result);
+
+				deferred.resolve(result);
+			});
+			/*
+			// Simulate the delay
+			$timeout(function() {
+				console.log("done download");
+				deferred.resolve("hello");
+			}, 3000);
+			*/
+
+			// Return the promise
+			return deferred.promise;
+		}
+	}
+}])
 .factory('directory', ['$window', function(win) {
 	return {
 		'list': function(path, callback) {
@@ -513,5 +547,4 @@ angular.module('starter', ['ionic', 'starter.controllers','leaflet-directive'])
 			}
 		}
 	};
-
 }]);
