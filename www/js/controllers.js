@@ -106,6 +106,41 @@ console.log("going to add the mbtiles");
 var dbFileName = 'test.db';
 	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1});
 
+	// Do some test transaction
+	db.transaction(function(tx) {
+	alert("going to do the transaction");
+
+		tx.executeSql(
+			//'SELECT name FROM sqlite_master WHERE type = "table";',
+			'SELECT * FROM images limit 2;',
+			[],
+			function(ttx, result) {
+				alert("result from sqlite_master");
+				//alert(JSON.stringify(result));
+				if (result != null && result.rows != null) {
+					alert("there are stuff in the result and rows");
+					alert(result.rows.length);
+					for (var j = 0; j < result.rows.length; j++) {
+						var row = result.rows.item(j);
+						alert("row result: "+JSON.stringify(row));
+						alert(row);
+					}
+				}
+			},
+			errorHandler
+		);
+	});
+
+	// Set the view
+	map.setView(
+		[51.505, -0.08],
+		2	
+	);
+
+	// Limit the bound to the world
+	var bounds = L.latLngBounds([[-85,-180.0],[85,180.0]]);
+	map.setMaxBounds(bounds);
+
 	var lyr = new L.TileLayer.MBTiles('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {maxZoom: 4, minZoom: 1, scheme: 'tms'}, db);
 console.log("this is after the mbtiles");
 console.log(lyr);
