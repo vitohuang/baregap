@@ -524,13 +524,6 @@ angular.module('starter', ['ionic', 'starter.controllers','leaflet-directive'])
 
 				deferred.resolve(result);
 			});
-			/*
-			// Simulate the delay
-			$timeout(function() {
-				console.log("done download");
-				deferred.resolve("hello");
-			}, 3000);
-			*/
 
 			// Return the promise
 			return deferred.promise;
