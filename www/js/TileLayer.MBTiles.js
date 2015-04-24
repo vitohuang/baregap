@@ -43,7 +43,8 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		*/
 		this.mbTilesDB.transaction(function(tx) {
 		console.log();
-			tx.executeSql("SELECT tile_data FROM images INNER JOIN map ON images.tile_id = map.tile_id WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function (tx, res) {
+			//tx.executeSql("SELECT tile_data FROM images INNER JOIN map ON images.tile_id = map.tile_id WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function (tx, res) {
+			tx.executeSql("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function (tx, res) {
 	//alert("got tile from sqlite db");
 //alert(res.rows.length);
 	for (var i = 0; i < res.rows.length; i++) {

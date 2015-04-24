@@ -122,7 +122,7 @@ var dbFileName = 'test.db';
 
 		tx.executeSql(
 			//'SELECT name FROM sqlite_master WHERE type = "table";',
-			'SELECT * FROM images limit 2;',
+			'SELECT tile_row FROM tiles limit 2;',
 			[],
 			function(ttx, result) {
 				alert("result from sqlite_master");
