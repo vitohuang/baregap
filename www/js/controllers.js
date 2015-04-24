@@ -106,6 +106,16 @@ console.log("going to add the mbtiles");
 var dbFileName = 'test.db';
 	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1});
 
+	// Set the view
+	map.setView(
+		[51.505, -0.08],
+		2	
+	);
+
+	// Limit the bound to the world
+	var bounds = L.latLngBounds([[-85,-180.0],[85,180.0]]);
+	map.setMaxBounds(bounds);
+
 	// Do some test transaction
 	db.transaction(function(tx) {
 	alert("going to do the transaction");
@@ -122,29 +132,19 @@ var dbFileName = 'test.db';
 					alert(result.rows.length);
 					for (var j = 0; j < result.rows.length; j++) {
 						var row = result.rows.item(j);
-						alert("row result: "+JSON.stringify(row));
-						alert(row);
+						//alert("row result: "+JSON.stringify(row));
+						//alert(row);
 					}
+	var lyr = new L.TileLayer.MBTiles('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {maxZoom: 4, minZoom: 1, scheme: 'tms'}, db);
+console.log("this is after the mbtiles");
+console.log(lyr);
+	lyr.addTo(map);
 				}
 			},
 			errorHandler
 		);
 	});
 
-	// Set the view
-	map.setView(
-		[51.505, -0.08],
-		2	
-	);
-
-	// Limit the bound to the world
-	var bounds = L.latLngBounds([[-85,-180.0],[85,180.0]]);
-	map.setMaxBounds(bounds);
-
-	var lyr = new L.TileLayer.MBTiles('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {maxZoom: 4, minZoom: 1, scheme: 'tms'}, db);
-console.log("this is after the mbtiles");
-console.log(lyr);
-	lyr.addTo(map);
 }
 
 		});
