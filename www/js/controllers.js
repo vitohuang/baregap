@@ -106,11 +106,9 @@ console.log("going to add the mbtiles");
 var dbFileName = 'test.db';
 	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1});
 
-	// Set the view
-	map.setView(
-		[51.505, -0.08],
-		2	
-	);
+	var centre = [51.505, -0.08];
+	var maxZoom = 10;
+	var minZoom = 1;
 
 	// Limit the bound to the world
 	var bounds = L.latLngBounds([[-85,-180.0],[85,180.0]]);
@@ -121,21 +119,43 @@ var dbFileName = 'test.db';
 	alert("going to do the transaction");
 
 		tx.executeSql(
-			//'SELECT name FROM sqlite_master WHERE type = "table";',
-			'SELECT tile_row FROM tiles limit 2;',
+			'SELECT key, value FROM meta_data;',
 			[],
 			function(ttx, result) {
-				alert("result from sqlite_master");
+				alert("got stuff from meta_data table");
 				//alert(JSON.stringify(result));
 				if (result != null && result.rows != null) {
-					alert("there are stuff in the result and rows");
+					alert("there are stuff in the meta data table");
 					alert(result.rows.length);
 					for (var j = 0; j < result.rows.length; j++) {
 						var row = result.rows.item(j);
-						//alert("row result: "+JSON.stringify(row));
-						//alert(row);
+						alert(row.key+' -> '+row.value);
+
+						if (row.key == 'centre') {
+							centre = JSON.parse(row.value);
+							alert("centre");
+							alert(centre);
+						}
+
+						if (row.key == 'zoom') {
+							alert("zoom");
+							var zoom = JSON.parse(row.value);
+							maxZoom = zoom.max || maxZoom;
+							minZoom = zoom.min || minZoom;
+							alert(zoom);
+						}
+
+						if (row.key == 'bounds') {
+							alert("bounds");
+							var bounds = JSON.parse(row.value);
+							alert(bounds);
+						}
 					}
-	var lyr = new L.TileLayer.MBTiles('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {maxZoom: 4, minZoom: 1, scheme: 'tms'}, db);
+	map.setView(
+		centre,
+		minZoom	
+	);
+	var lyr = new L.TileLayer.MBTiles('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {'maxZoom': maxZoom, 'minZoom': minZoom, scheme: 'tms'}, db);
 console.log("this is after the mbtiles");
 console.log(lyr);
 	lyr.addTo(map);
