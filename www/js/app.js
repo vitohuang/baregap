@@ -477,6 +477,15 @@ angular.module('starter', ['ionic', 'starter.controllers','leaflet-directive'])
       }
     }
   })
+  .state('app.singleMap', {
+    url: "/maps/:mapId",
+    views: {
+      'menuContent': {
+        templateUrl: "templates/map.html",
+        controller: 'MapCtrl'
+      }
+    }
+  })
     .state('app.log', {
       url: "/log",
       views: {

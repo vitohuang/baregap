@@ -68,10 +68,10 @@ angular.module('starter.controllers', [])
 	$scope.london = {
 		lat: 51.505,
 		lng: -0.09,
-		zoom: 8
+		zoom: 3
 	};
 	console.log("trying to get leaflet object");
-	console.log(leafletData.getMap());
+	//console.log(leafletData.getMap());
 
 	this.clearMap = function() {
 		var deferred = $q.defer();
@@ -92,10 +92,15 @@ angular.module('starter.controllers', [])
 	};
 
 	this.addTile = function(path) {
+		console.log("going to add tile");
 		this.clearMap().then(function(map) {
 			console.log("going to add the cycling map to it");
 if (typeof cordova == 'undefined') {
-			var cyclingTileLayer= new L.tileLayer('http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png', {
+	var tileUrl = 'http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png';
+	if ($stateParams.mapId) {
+		tileUrl = 'http://www.cluelesscycling.com:8181/getTile?dbName='+$stateParams.mapId+'&x={x}&y={y}&z={z}';
+	}
+			var cyclingTileLayer= new L.tileLayer(tileUrl, {
 				attribution: 'Map data',
 				maxZoom: 18
 			});
@@ -104,6 +109,9 @@ if (typeof cordova == 'undefined') {
 } else {
 console.log("going to add the mbtiles");
 var dbFileName = 'test.db';
+if ($stateParams.mapId) {
+	dbFileName = $stateParams.mapId;
+}
 	var db = window.sqlitePlugin.openDatabase({name: dbFileName, androidLockWorkaround: 1});
 
 	var centre = [51.505, -0.08];
@@ -184,6 +192,18 @@ console.log(dbAbsPath);
 	// Refresh the view
 	$scope.doRefresh = function() {
 		console.log("do refresh");
+		// Fake maps if there is no db path
+		if (!dbAbsPath) {
+			$scope.maps = [
+				{name: '1430134582968', size: '123'},
+				{name: '1430134457805', size: '321'}
+			];
+
+			$scope.$broadcast('scroll.refreshComplete');
+			return true;
+		}
+
+		// Do a directory listing
 		directory.list(dbAbsPath, function(error, result) {
 			console.log("get content from the:"+dbAbsPath);
 			
@@ -213,7 +233,6 @@ console.log(dbAbsPath);
 	}
 
 	$scope.doRefresh();
-  //$scope.maps = directory.list();
 }])
 
 .controller('LogCtrl', function($scope) {
@@ -239,4 +258,5 @@ console.log(dbAbsPath);
 })
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
+	console.log($stateParams);
 });
