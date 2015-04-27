@@ -149,6 +149,8 @@ var dbFileName = 'test.db';
 							alert("bounds");
 							var bounds = JSON.parse(row.value);
 							alert(bounds);
+	var maxBounds = L.latLngBounds(bounds);
+	map.setMaxBounds(maxBounds);
 						}
 					}
 	map.setView(
