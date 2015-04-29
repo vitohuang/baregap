@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', ['$scope', '$ionicModal', '$timeout', 'downloader', function($scope, $ionicModal, $timeout, downloader) {
+.controller('AppCtrl', ['$scope', '$ionicModal', '$state', '$timeout', 'downloader', function($scope, $ionicModal, $state, $timeout, downloader) {
   // Form data for the download modal
   $scope.download = {
 	  url: ''
@@ -61,8 +61,52 @@ angular.module('starter.controllers', [])
     }
 
   };
+
+  // Find the current location
+  $scope.locateMe = function() {
+	  console.log("trying to get the current location");
+	  navigator.geolocation.getCurrentPosition(onLocationSuccess, onLocationError);
+  };
+
+  var onLocationSuccess = function(position) {
+	  alert("got your position");
+	  console.log(position);
+	  var coords = position.coords;
+	  $scope.currentLocation = position;
+
+	  // transition to the map state
+	  $state.transitionTo("app.map");
+	  console.log("going to transition to app.map");
+	  $scope.$broadcast('currentPosition', position);
+  };
+
+  var onLocationError = function(error) {
+	  alert("code:"+error.code+"\n message:" + error.message);
+	  console.log(error);
+  }
+
 }])
 .controller('MapCtrl', ["$scope", "$q", "$stateParams",  "leafletData", function($scope,$q, $stateParams, leafletData) {
+
+	// Listen to the current location
+	$scope.currentMarker = null;
+	$scope.$on('currentPosition', function(event, position) {
+		console.log("got the current postion and going to draw it on the map");
+		console.log(position);
+		leafletData.getMap().then(function(map) {
+			if ($scope.currentMarker) {
+				map.removeLayer($scope.currentMarker);
+			}
+
+			// Current marker
+			var currentMarker =  L.marker([position.coords.latitude + Math.random(), position.coords.longitude + Math.random()]);
+
+			currentMarker.addTo(map);
+			currentMarker.bindPopup("<b>"+position.coords.latitude + ", "+position.coords.longitude+"</b>").openPopup();
+
+			$scope.currentMarker = currentMarker;
+		});
+	});
 	console.log("this is the map controller");
 	console.log($stateParams);
 	$scope.london = {
