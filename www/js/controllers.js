@@ -62,37 +62,39 @@ angular.module('starter.controllers', [])
 
   };
 
-  // Find the current location
-  $scope.locateMe = function() {
-	  console.log("trying to get the current location");
-	  navigator.geolocation.getCurrentPosition(onLocationSuccess, onLocationError);
-  };
-
-  var onLocationSuccess = function(position) {
-	  alert("got your position");
-	  console.log(position);
-	  var coords = position.coords;
-	  $scope.currentLocation = position;
-
-	  // transition to the map state
-	  $state.transitionTo("app.map");
-	  console.log("going to transition to app.map");
-	  $scope.$broadcast('currentPosition', position);
-  };
-
-  var onLocationError = function(error) {
-	  alert("code:"+error.code+"\n message:" + error.message);
-	  console.log(error);
-  }
-
 }])
 .controller('MapCtrl', ["$scope", "$q", "$stateParams",  "leafletData", function($scope,$q, $stateParams, leafletData) {
 
 	// Listen to the current location
 	$scope.currentMarker = null;
+	$scope.locateMeStatus = '';
 	$scope.$on('currentPosition', function(event, position) {
+	});
+
+	  // Find the current location
+	  $scope.locateMe = function() {
+		  console.log("trying to get the current location");
+		$scope.locateMeStatus = 'finding';
+		  navigator.geolocation.getCurrentPosition(onLocationSuccess, onLocationError);
+	  };
+
+	  var onLocationSuccess = function(position) {
+		  alert("got your position");
+		$scope.locateMeStatus = 'success';
+		  console.log(position);
+		  var coords = position.coords;
+		  $scope.currentLocation = position;
+
+		  // transition to the map state
+		  $state.transitionTo("app.map");
+		  console.log("going to transition to app.map");
+		  $scope.$broadcast('currentPosition', position);
+
 		console.log("got the current postion and going to draw it on the map");
 		console.log(position);
+
+		// Update the status
+		$scope.locateMeStatus = 'success';
 		leafletData.getMap().then(function(map) {
 			if ($scope.currentMarker) {
 				map.removeLayer($scope.currentMarker);
@@ -106,7 +108,14 @@ angular.module('starter.controllers', [])
 
 			$scope.currentMarker = currentMarker;
 		});
-	});
+	  };
+
+	  var onLocationError = function(error) {
+		$scope.locateMeStatus = 'fail';
+		  alert("code:"+error.code+"\n message:" + error.message);
+		  console.log(error);
+	  }
+
 	console.log("this is the map controller");
 	console.log($stateParams);
 	$scope.london = {

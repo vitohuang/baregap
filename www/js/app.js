@@ -464,9 +464,6 @@ angular.module('starter', ['ionic', 'starter.controllers','leaflet-directive'])
       'menuContent': {
         templateUrl: "templates/map.html",
   	controller: 'MapCtrl'
-      },
-      'headerContent': {
-	      templateUrl: 'templates/map_header.html'
       }
     }
   })
