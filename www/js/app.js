@@ -212,11 +212,11 @@ alert("external storage data directory:"+cordova.file.externalApplicationStorage
 			console.log('exists');
 
 			cb(true, 'already exist');
-alert("file already exist");
+//alert("file already exist");
 //alert(JSON.stringify(entry));
 
 		}, function () {
-alert("file not exist creating it now");
+//alert("file not exist creating it now");
 			// file does not exist
 			console.log('does not exist');
 
@@ -225,7 +225,7 @@ alert("file not exist creating it now");
 			console.log(remoteFile);
 			ft = new FileTransfer();
 			ft.download(remoteFile, targetDirectory +  localFileName, function (entry) {
-alert("download complete");
+//alert("download complete");
 				cb(true, 'download complete');
 				console.log('download complete: ' + entry.fullPath);
 

@@ -215,7 +215,7 @@ if ($stateParams.mapId) {
 					}
 	map.setView(
 		centre,
-		minZoom	
+		maxZoom	
 	);
 	var lyr = new L.TileLayer.MBTiles('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {'maxZoom': maxZoom, 'minZoom': minZoom, scheme: 'tms'}, db);
 console.log("this is after the mbtiles");
