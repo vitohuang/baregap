@@ -35,7 +35,7 @@ console.log("device is ready");
 	// Maksure the database directory is there
 	ensureDatabaseDirectory(function(error, result) {
 		console.log("ok, the database directory is there, no go to fetch test.mbtiles");
-		alert("cool so we have the database directory");
+		//alert("cool so we have the database directory");
 		go();
 
 	});
@@ -204,8 +204,8 @@ alert("external storage data directory:"+cordova.file.externalApplicationStorage
 	
 	console.log('requesting file system...');
 	window.resolveLocalFileSystemURL(targetDirectory, function(dEntry) {
-alert("resolved data Directory:"+dEntry.name+" -> path:"+dEntry.fullPath);
-alert("file full path in go() to checked: "+localFileName);
+//alert("resolved data Directory:"+dEntry.name+" -> path:"+dEntry.fullPath);
+//alert("file full path in go() to checked: "+localFileName);
 		// check to see if files already exists
 		var file = dEntry.getFile(localFileName, {create: false}, function (entry) {
 			// file exists
@@ -213,7 +213,7 @@ alert("file full path in go() to checked: "+localFileName);
 
 			cb(true, 'already exist');
 alert("file already exist");
-alert(JSON.stringify(entry));
+//alert(JSON.stringify(entry));
 
 		}, function () {
 alert("file not exist creating it now");

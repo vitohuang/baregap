@@ -79,7 +79,6 @@ angular.module('starter.controllers', [])
 	  };
 
 	  var onLocationSuccess = function(position) {
-		  alert("got your position");
 		$scope.locateMeStatus = 'success';
 		  console.log(position);
 		  var coords = position.coords;
@@ -177,39 +176,39 @@ if ($stateParams.mapId) {
 
 	// Do some test transaction
 	db.transaction(function(tx) {
-	alert("going to do the transaction");
+	//alert("going to do the transaction");
 
 		tx.executeSql(
 			'SELECT key, value FROM meta_data;',
 			[],
 			function(ttx, result) {
-				alert("got stuff from meta_data table");
+				//alert("got stuff from meta_data table");
 				//alert(JSON.stringify(result));
 				if (result != null && result.rows != null) {
-					alert("there are stuff in the meta data table");
-					alert(result.rows.length);
+					//alert("there are stuff in the meta data table");
+					//alert(result.rows.length);
 					for (var j = 0; j < result.rows.length; j++) {
 						var row = result.rows.item(j);
-						alert(row.key+' -> '+row.value);
+						//alert(row.key+' -> '+row.value);
 
 						if (row.key == 'centre') {
 							centre = JSON.parse(row.value);
-							alert("centre");
-							alert(centre);
+							//alert("centre");
+							//alert(centre);
 						}
 
 						if (row.key == 'zoom') {
-							alert("zoom");
+							//alert("zoom");
 							var zoom = JSON.parse(row.value);
 							maxZoom = zoom.max || maxZoom;
 							minZoom = zoom.min || minZoom;
-							alert(zoom);
+							//alert(zoom);
 						}
 
 						if (row.key == 'bounds') {
-							alert("bounds");
+							//alert("bounds");
 							var bounds = JSON.parse(row.value);
-							alert(bounds);
+							//alert(bounds);
 	var maxBounds = L.latLngBounds(bounds);
 	map.setMaxBounds(maxBounds);
 						}

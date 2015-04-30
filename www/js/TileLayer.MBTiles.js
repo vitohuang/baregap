@@ -4,7 +4,6 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 	mbTilesDB: null,
 
 	initialize: function(url, options, db) {
-		alert("mbtiles leaflet tile init");
 		// Set the mtiles
 		this.mbTilesDB = db;
 
